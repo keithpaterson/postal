@@ -1,0 +1,15 @@
+= Postal
+
+Command-line control and configuration for network communication.
+
+The basic premise is to replace Postman with a command-line tool
+that can be configured via toml scripts, environment variables,
+and input parameters.
+
+This tool can then be used to:
+
+* automate testing against endpoints,
+* simplify manual testing for endpoint developers
+* share configurations via configuration files committed to SCM.
+** you can pre-configure build vs. prod vs. test settings independently
+   and concatenate them via the command line to compose your configuration

@@ -1,0 +1,7 @@
+*.swp
+*.tmp
+*.kwp
+
+bin/
+.vscode/
+
