@@ -37,9 +37,8 @@ _build_app() {
   echo "Build ..."
   mkdir -p ${_bin_dir}
   #cd ${_root_dir}/${_name}
-  # _version=$(_run bump -r ${_root_dir} -d -b alpha -s)
-  # -ldflags="-X 'main.version=${_version}'"
-  go build -o ${_bin_dir}/postal $* ${_root_dir}/...
+  _version=$(_run bump -r ${_root_dir} -d -b alpha -s)
+  go build -ldflags="-X postal/cmd.appVersion=${_version}" -o ${_bin_dir}/postal $* ./cmd/main/main.go
 }
 
 _build_generate() {
