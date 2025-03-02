@@ -1,0 +1,17 @@
+# Example for composing an url with json body data
+# - the url injects three values:
+#   - an argument that must be specified on the command-line
+#   - the value of $FOO from the environment
+#   - the value of a property called "first"
+# - the body data comes from a separate file
+#   - the body's mime type must be explicitly specified
+[request]
+  method = "GET"
+  url = "http://myhost/resource/${arg:id}/${env:FOO}/${first}"
+  body = "file:./files/input_${second}.data"
+  mime-type = "application/json"
+
+[properties]
+  first = "body"
+  third = "mattress"
+

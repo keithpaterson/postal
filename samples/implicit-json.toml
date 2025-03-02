@@ -1,0 +1,27 @@
+# Example for composing an url with json body data
+# - the url injects two values:
+#   - the value of $FOO from the environment
+#   - the value of a property called "first"
+# - the body is implicitly "application/json"
+[request]
+  method = "POST"
+  url = "http://myhost/resource/1234/${env:FOO}/${first}"
+  body = 'json:{"this":"sucks","that":${second}}'
+
+[properties]
+  first = "one"
+  second = 2
+
+[jwt]
+  [jwt.header]
+    alg = "hs256" # this is default, but you can specify this elsewhere
+
+  [jwt.payload]
+    iss = "foo"
+    sub = "this=x,that=foo,those=bar"
+    aud = "urn:myThingamabob"
+    exp = "9876543210"
+    iat = "1234567890"
+    nbf = "1029384756"
+    jti = "yeah,whatevs"
+  
