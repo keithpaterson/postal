@@ -12,9 +12,9 @@ var (
 )
 
 type Config struct {
-	Request    RequestConfig `toml:"request,omitempty"`
-	JWT        JWTConfig     `toml:"jwt,omitempty"`
-	Properties Properties    `toml:"properties,omitempty"`
+	Request    RequestConfig `toml:"request,omitempty"    validate:"required"`
+	JWT        JWTConfig     `toml:"jwt,omitempty"        validate:"omitempty"`
+	Properties Properties    `toml:"properties,omitempty" validate:"omitempty,dive,gt=0"`
 }
 
 type Properties map[string]any

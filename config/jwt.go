@@ -5,12 +5,12 @@ const (
 )
 
 type JWTConfig struct {
-	Header  JWTHeader  `toml:"header,omitempty"`
-	Payload JWTPayload `toml:"payload,omitempty"`
+	Header  JWTHeader  `toml:"header,omitempty"  validate:"required"`
+	Payload JWTPayload `toml:"payload,omitempty" validate:"required,dive,gt=0"`
 }
 
 type JWTHeader struct {
-	Alg string `toml:"alg,required"`
+	Alg string `toml:"alg,required" validate:"required"`
 }
 
 type JWTPayload map[string]string
