@@ -1,6 +1,7 @@
 package config_test
 
 import (
+	"postal/logging"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -8,6 +9,7 @@ import (
 )
 
 func TestModels(t *testing.T) {
+	logging.Disable()
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Config Suite")
 }

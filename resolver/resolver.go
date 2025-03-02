@@ -2,8 +2,11 @@ package resolver
 
 import (
 	"postal/config"
+	"postal/logging"
 	"regexp"
 	"strings"
+
+	"go.uber.org/zap"
 )
 
 var (
@@ -16,12 +19,13 @@ type Resolver interface {
 }
 
 type rootResolver struct {
+	log       *zap.SugaredLogger
 	config    *config.Config
 	resolvers resolversMap
 }
 
 func NewResolver(config *config.Config) *rootResolver {
-	root := &rootResolver{config: config}
+	root := &rootResolver{config: config, log: logging.NamedLogger("resolver")}
 
 	dtr := newDateTimeResolver(root)
 	root.resolvers = resolversMap{
@@ -41,6 +45,7 @@ type resolver interface {
 
 type resolverImpl struct {
 	root *rootResolver
+	log  *zap.SugaredLogger
 }
 type resolversMap map[string]resolver
 

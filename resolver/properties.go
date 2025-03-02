@@ -1,11 +1,15 @@
 package resolver
 
+import (
+	"fmt"
+)
+
 type propertiesResolver struct {
 	resolverImpl
 }
 
 func newPropertiesResolver(root *rootResolver) *propertiesResolver {
-	return &propertiesResolver{resolverImpl{root: root}}
+	return &propertiesResolver{resolverImpl{root: root, log: root.log.Named("properties")}}
 }
 
 func (r *propertiesResolver) resolve(name string, token string) (string, bool) {
@@ -17,7 +21,7 @@ func (r *propertiesResolver) resolve(name string, token string) (string, bool) {
 	if !ok {
 		return token, false
 	}
-	strVal := value.(string)
+	strVal := fmt.Sprintf("%v", value) //value.(string)
 
 	return r.resolveValue(strVal), true
 }

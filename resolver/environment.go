@@ -9,7 +9,7 @@ type envResolver struct {
 }
 
 func newEnvResolver(root *rootResolver) *envResolver {
-	return &envResolver{resolverImpl{root: root}}
+	return &envResolver{resolverImpl{root: root, log: root.log.Named("environment")}}
 }
 
 func (r *envResolver) resolve(name string, token string) (string, bool) {

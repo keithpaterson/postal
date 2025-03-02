@@ -108,7 +108,7 @@ type dateTimeResolver struct {
 
 func newDateTimeResolver(root *rootResolver) *dateTimeResolver {
 	return &dateTimeResolver{
-		resolverImpl{root: root},
+		resolverImpl{root: root, log: root.log.Named("datetime")},
 		time.Now,
 	}
 }
@@ -233,7 +233,7 @@ func (r *dateTimeResolver) toDateTime(timeval string, format string, modifier ti
 
 	var actual time.Time
 	if actual, err = r.parseDateTime(timeval, format); err != nil {
-		fmt.Printf("ERROR: failed to parse '%s': %s\n", timeval, err.Error())
+		r.log.Error("error", fmt.Sprintf("failed to parse '%s': %s\n", timeval, err.Error()))
 		return
 	}
 
