@@ -13,18 +13,23 @@ import (
 
 	"github.com/keithpaterson/resweave-utils/client"
 	"github.com/keithpaterson/resweave-utils/header"
+	"go.uber.org/zap"
 )
 
 type httpSender struct {
 	cfg *config.Config
+	log *zap.SugaredLogger
 }
 
-func sendHttp(cfg *config.Config) error {
-	s := &httpSender{cfg: cfg}
+func sendHttp(cfg *config.Config, log *zap.SugaredLogger) error {
+	s := &httpSender{cfg: cfg, log: log.Named("http")}
 	return s.execute()
 }
 
 func (s *httpSender) execute() error {
+	s.log.Debugw("execute", "status", "started")
+	defer s.log.Debugw("execute", "status", "completed")
+
 	var err error
 	var body []byte
 	if body, err = s.getBodyData(); err != nil {

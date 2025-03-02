@@ -4,9 +4,12 @@ import (
 	"github.com/spf13/cobra"
 
 	"postal/cmd"
+	"postal/logging"
 )
 
 func main() {
+	defer logging.Teardown()
+
 	rootCmd := setupCli()
 
 	if err := rootCmd.Execute(); err != nil {

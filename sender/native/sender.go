@@ -4,14 +4,17 @@ import (
 	"fmt"
 	"net/url"
 	"postal/config"
+
+	"go.uber.org/zap"
 )
 
 type sender struct {
 	cfg *config.Config
+	log *zap.SugaredLogger
 }
 
-func NewSender() *sender {
-	return &sender{}
+func NewSender(log *zap.SugaredLogger) *sender {
+	return &sender{log: log.Named("native")}
 }
 
 func (s *sender) Send(cfg *config.Config) error {
@@ -26,7 +29,7 @@ func (s *sender) Send(cfg *config.Config) error {
 	}
 	switch target.Scheme {
 	case "http", "https":
-		err = sendHttp(s.cfg)
+		err = sendHttp(s.cfg, s.log)
 	default:
 		err = fmt.Errorf("unsupported scheme '%s'", target.Scheme)
 	}

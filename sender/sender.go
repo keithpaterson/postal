@@ -61,11 +61,11 @@ func (s *rootSender) Send(cfg *config.Config) error {
 	if actualCfg, err = validate.ValidateConfig(cfg); err != nil {
 		return err
 	}
-	s.log.Debugf("validated config: %#v\n", actualCfg)
+	s.log.Debugw("Send", "validated config", fmt.Sprintf("%#v", actualCfg))
 
 	switch s.id {
 	case NativeSender:
-		e := native.NewSender()
+		e := native.NewSender(s.log)
 		return e.Send(actualCfg)
 	case CurlSender:
 		e := curl.NewSender()

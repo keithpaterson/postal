@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 	"postal/config"
-	"postal/executor"
+	"postal/logging"
+	"postal/sender"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -23,17 +24,17 @@ const (
 )
 
 var (
-	executorNames = strings.Join([]string{executor.StrNativeExecutor, executor.StrCurlExecutor}, ", ")
+	senderNames = strings.Join([]string{sender.NativeSenderName, sender.CurlSenderName}, ", ")
 )
 
 func NewSendCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "send",
 		Short: "send a message",
-		RunE:  sendMessage,
+		Run:   sendMessage,
 	}
 
-	cmd.Flags().String(execFlag, executor.StrNativeExecutor, fmt.Sprintf("Identifies which executor to use: one of [%s]", executorNames))
+	cmd.Flags().String(execFlag, sender.NativeSenderName, fmt.Sprintf("Identifies which executor to use: one of [%s]", senderNames))
 	cmd.Flags().StringArrayP(fileFlag, fFlag, []string{}, "config file")
 	cmd.Flags().StringArrayP(propFlag, pFlag, []string{}, "one or more properties (key=value)")
 	cmd.Flags().StringP(methodFlag, mFlag, "", "HTTP method")
@@ -48,7 +49,16 @@ func NewSendCommand() *cobra.Command {
 	return cmd
 }
 
-func sendMessage(cmd *cobra.Command, _ []string) error {
+func sendMessage(cmd *cobra.Command, args []string) {
+	if err := sendMessageE(cmd, args); err != nil {
+		fmt.Println("ERROR: failed to send request:", err)
+	}
+}
+
+func sendMessageE(cmd *cobra.Command, _ []string) error {
+	setupLogging(cmd)
+	log := logging.NamedLogger("sendcmd")
+
 	dryRun, _ := cmd.Flags().GetBool(dryRunFlag)
 
 	var err error
@@ -74,10 +84,14 @@ func sendMessage(cmd *cobra.Command, _ []string) error {
 
 	name, _ := cmd.Flags().GetString(execFlag)
 
-	fmt.Println("dryRun:", dryRun)
-	fmt.Printf("%#v\n", *cfg)
+	log.Debug("dryRun:", dryRun)
+	log.Debugf("%#v", *cfg)
 
-	return executor.RunNamed(name, cfg)
+	sender, err := sender.NewNamedSender(name)
+	if err != nil {
+		return err
+	}
+	return sender.Send(cfg)
 }
 
 func loadConfig(cmd *cobra.Command, cfg *config.Config) error {
