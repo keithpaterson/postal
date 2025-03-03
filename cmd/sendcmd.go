@@ -17,9 +17,9 @@ const (
 	methodFlag, mFlag = "method", "m"
 	urlFlag, uFlag    = "url", "u"
 	bodyFlag, bFlag   = "body", "b"
-	mimeTypeFlag      = "mime-type"
 	jwtFlag           = "jwt"
 	algFlag, aFlag    = "alg", "a"
+	headerFlag, hFlag = "header", "H"
 	execFlag          = "using"
 )
 
@@ -40,8 +40,8 @@ func NewSendCommand() *cobra.Command {
 	cmd.Flags().StringP(methodFlag, mFlag, "", "HTTP method")
 	cmd.Flags().StringP(urlFlag, uFlag, "", "URL")
 	cmd.Flags().StringP(bodyFlag, bFlag, "", "body specification")
-	cmd.Flags().String(mimeTypeFlag, "", "Body Mime Type")
 	cmd.Flags().StringArray(jwtFlag, []string{}, "one or more JWT claims (key=value)")
+	cmd.Flags().StringArrayP(headerFlag, hFlag, []string{}, "one or HTTP headers (key=value)")
 	cmd.Flags().StringP(algFlag, aFlag, "", "JWT algorithm")
 
 	cmd.MarkFlagRequired("file")
@@ -98,7 +98,7 @@ func loadConfig(cmd *cobra.Command, cfg *config.Config) error {
 	var err error
 	var filenames []string
 	if filenames, err = cmd.Flags().GetStringArray(fileFlag); err != nil {
-		return fmt.Errorf("failed to process file flag: %w", err)
+		return flagError(fileFlag, err)
 	}
 
 	for _, filename := range filenames {
@@ -120,7 +120,7 @@ func processProperties(cmd *cobra.Command, cfg *config.Config) error {
 	var err error
 	var props []string
 	if props, err = cmd.Flags().GetStringArray(propFlag); err != nil {
-		return fmt.Errorf("failed to process properties: %w", err)
+		return flagError(propFlag, err)
 	}
 
 	for _, prop := range props {
@@ -141,7 +141,7 @@ func processRequestArgs(cmd *cobra.Command, cfg *config.Config) error {
 	if cmd.Flags().Changed(methodFlag) {
 		var method string
 		if method, err = cmd.Flags().GetString(methodFlag); err != nil {
-			return fmt.Errorf("failed to process method flag: %w", err)
+			return flagError(methodFlag, err)
 		}
 		cfg.Request.Method = method
 	}
@@ -149,7 +149,7 @@ func processRequestArgs(cmd *cobra.Command, cfg *config.Config) error {
 	if cmd.Flags().Changed(urlFlag) {
 		var url string
 		if url, err = cmd.Flags().GetString(urlFlag); err != nil {
-			return fmt.Errorf("failed to process url flag: %w", err)
+			return flagError(urlFlag, err)
 		}
 		cfg.Request.URL = url
 	}
@@ -157,21 +157,29 @@ func processRequestArgs(cmd *cobra.Command, cfg *config.Config) error {
 	if cmd.Flags().Changed(bodyFlag) {
 		var body string
 		if body, err = cmd.Flags().GetString(bodyFlag); err != nil {
-			return fmt.Errorf("failed to process body flag: %w", err)
+			return flagError(bodyFlag, err)
 		}
 		cfg.Request.Body = body
 		// TODO(keithpaterson): we use the body information to determine Mime Type
 	}
 
-	// .. and this explicitly overrides any implied mime type
-	if cmd.Flags().Changed(mimeTypeFlag) {
-		var mimeType string
-		if mimeType, err = cmd.Flags().GetString(mimeTypeFlag); err != nil {
-			return fmt.Errorf("failed to process mime-type flag: %w", err)
-		}
-		cfg.Request.MimeType = mimeType
+	return processRequestHeaders(cmd, cfg)
+}
+
+func processRequestHeaders(cmd *cobra.Command, cfg *config.Config) error {
+	var err error
+	var headers []string
+	if headers, err = cmd.Flags().GetStringArray(headerFlag); err != nil {
+		return flagError(headerFlag, err)
 	}
 
+	for _, header := range headers {
+		key, value, ok := strings.Cut(header, "=")
+		if !ok {
+			return fmt.Errorf("invalid header specification '%s' (expect key=value)", header)
+		}
+		cfg.Request.Headers[key] = value
+	}
 	return nil
 }
 
@@ -201,4 +209,12 @@ func processJWTClaims(cmd *cobra.Command, cfg *config.Config) error {
 	}
 
 	return nil
+}
+
+func flagError(name string, err error) error {
+	if err != nil {
+		return fmt.Errorf("failed to process %s flag: %w", name, err)
+	} else {
+		return fmt.Errorf("failed to process %s flag", name)
+	}
 }

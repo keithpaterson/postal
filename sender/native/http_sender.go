@@ -40,8 +40,8 @@ func (s *httpSender) execute() error {
 	if req, err = s.newRequest(body); err != nil {
 		return err
 	}
-	if s.cfg.Request.MimeType != "" {
-		req.Header.Add("Content-Type", s.cfg.Request.MimeType)
+	for key, value := range s.cfg.Request.Headers {
+		req.Header.Add(key, value)
 	}
 
 	var resp *http.Response
@@ -52,8 +52,13 @@ func (s *httpSender) execute() error {
 	defer resp.Body.Close()
 
 	// how to parse the response?
+	var data []byte
+	if data, err = io.ReadAll(resp.Body); err != nil {
+		s.log.Debugw("execute", "response", data)
+	}
+	fmt.Println("\nresponse:\n>>>\n", string(data), "\n<<<")
 
-	return errors.New("not implemented")
+	return nil
 }
 
 func (s *httpSender) newRequest(body []byte) (*http.Request, error) {
@@ -81,8 +86,8 @@ func (s *httpSender) getBodyData() ([]byte, error) {
 	case "json":
 		// data is raw json
 		body = []byte(data)
-		if s.cfg.Request.MimeType == "" {
-			s.cfg.Request.MimeType = header.MimeTypeJson
+		if _, ok := s.cfg.Request.Headers["content-type"]; !ok {
+			s.cfg.Request.Headers["content-type"] = header.MimeTypeJson
 		}
 	case "file":
 		var file *os.File
