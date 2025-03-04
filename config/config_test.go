@@ -14,7 +14,7 @@ func compareConfig(actual *Config, expected *Config) {
 	Expect(actual.Request).To(Equal(expected.Request))
 
 	compareProperties(actual.Properties, expected.Properties)
-	compareJWTPayloads(actual.JWT.Payload, expected.JWT.Payload)
+	compareJWTPayloads(actual.JWT.Claims, expected.JWT.Claims)
 }
 
 func compareProperties(actual Properties, expected Properties) {
@@ -29,7 +29,7 @@ func compareProperties(actual Properties, expected Properties) {
 	}
 }
 
-func compareJWTPayloads(actual JWTPayload, expected JWTPayload) {
+func compareJWTPayloads(actual JWTClaims, expected JWTClaims) {
 	Expect(actual).To(Equal(expected))
 	if expected == nil {
 		Expect(actual).To(BeNil())

@@ -1,29 +1,63 @@
 package config
 
+import "slices"
+
 const (
-	defaultAlgorithm = "HS256"
+	DefaultAlgorithm = "HS256"
 )
 
+// algorithm naIDsmes
+const (
+	AlgNone JWTAlgorithm = iota
+	AlgHS256
+	AlgHS384
+	AlgHS512
+	AlgRS256
+	AlgRS384
+	AlgRS512
+	AlgES256
+	AlgES384
+	AlgES512
+	AlgPS256
+	AlgPS384
+	AlgPS512
+	AlgEdDSA
+
+	// must always be the last
+	algMax
+)
+
+type JWTAlgorithm int
+
+var algorithmNames = []string{
+	"None",
+	"HS256", "HS384", "HS512",
+	"RS256", "RS384", "RS512",
+	"ES256", "ES384", "ES512",
+	"PS256", "PS384", "P5512",
+	//unsupported: "EDDSA",
+}
+
 type JWTConfig struct {
-	Header  JWTHeader  `toml:"header,omitempty"  validate:"required"`
-	Payload JWTPayload `toml:"payload,omitempty" validate:"required,dive,gt=0"`
+	Header     JWTHeader `toml:"header,omitempty"      validate:"required"`
+	Claims     JWTClaims `toml:"claims,omitempty"      validate:"required,dive,gt=0"`
+	SigningKey string    `toml:"signing-key,omitempty" validate:"omitempty,gt=0"`
 }
 
 type JWTHeader struct {
-	Alg string `toml:"alg,required" validate:"required"`
+	Alg string `toml:"alg,required" validate:"required,oneof=None HS256 HS384 HS512 RS256 RS384 RS512 ES256 ES384 ES512 PS256 PS384 P5512 EDDSA"`
 }
 
-type JWTPayload map[string]string
+type JWTClaims map[string]string
 
-// TODO(keithpaterson): add some validation:
-// see https://datatracker.ietf.org/doc/html/rfc7518#section-3 for the list of supported algorithms
-// - header.alg must be one of [
-//     HS256, HS384, HS512,
-//     RS256, RS384, RS512,
-//     ES256, ES384, ES512,
-//     PS256, PS384, PS512,
-//     none]
-// - payload must have at least one key
-// - payload keys must be strings
-// - payload values must be strings (?) or at least can be converted to string
-// - are there any truly REQUIRED keys?
+func (a JWTAlgorithm) String() string {
+	return algorithmNames[a]
+}
+
+func (h JWTHeader) Algorithm() JWTAlgorithm {
+	index := slices.Index(algorithmNames, h.Alg)
+	if index < 0 || index >= int(algMax) {
+		index = 0
+	}
+	return JWTAlgorithm(index)
+}

@@ -24,4 +24,7 @@
     iat = "1234567890"
     nbf = "1029384756"
     jti = "yeah,whatevs"
-  
+  signing-key = "string:elephant tusk"      
+  #signing-key = "polecat musk"      
+  #signing-key = "hex:10 04 0a a3 a6 21 41 33"
+

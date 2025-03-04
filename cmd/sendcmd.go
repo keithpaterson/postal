@@ -42,7 +42,7 @@ func NewSendCommand() *cobra.Command {
 	cmd.Flags().StringP(bodyFlag, bFlag, "", "body specification")
 	cmd.Flags().StringArray(jwtFlag, []string{}, "one or more JWT claims (key=value)")
 	cmd.Flags().StringArrayP(headerFlag, hFlag, []string{}, "one or HTTP headers (key=value)")
-	cmd.Flags().StringP(algFlag, aFlag, "", "JWT algorithm")
+	cmd.Flags().StringP(algFlag, aFlag, config.DefaultAlgorithm, "JWT algorithm")
 
 	cmd.MarkFlagRequired("file")
 
@@ -205,7 +205,7 @@ func processJWTClaims(cmd *cobra.Command, cfg *config.Config) error {
 		if key, value, ok = strings.Cut(claim, "="); !ok {
 			return fmt.Errorf("failed to parse JWT claim value '%s'", claim)
 		}
-		cfg.JWT.Payload[strings.TrimSpace(key)] = strings.TrimSpace(value)
+		cfg.JWT.Claims[strings.TrimSpace(key)] = strings.TrimSpace(value)
 	}
 
 	return nil

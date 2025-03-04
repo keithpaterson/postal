@@ -20,7 +20,7 @@ var (
 	[jwt.header]
 		alg = "HS256"
 	
-	[jwt.payload]
+	[jwt.claims]
 		iss = "foo"
 		sub = "this=x,that=y,those=z"
 		aud = "urn:testything"
@@ -32,6 +32,6 @@ var (
 	validReq   = RequestConfig{Method: "POST", URL: "http://test.io", Body: `json:{"this":"that","then":123}`}
 	validProps = Properties{"one": "1", "two": int64(2), "three": "three"}
 	validJWT   = JWTConfig{
-		Header:  JWTHeader{Alg: "HS256"},
-		Payload: JWTPayload{"iss": "foo", "sub": "this=x,that=y,those=z", "aud": "urn:testything", "exp": "987654321", "foo": "bar", "bar": "foo"}}
+		Header: JWTHeader{Alg: "HS256"},
+		Claims: JWTClaims{"iss": "foo", "sub": "this=x,that=y,those=z", "aud": "urn:testything", "exp": "987654321", "foo": "bar", "bar": "foo"}}
 )

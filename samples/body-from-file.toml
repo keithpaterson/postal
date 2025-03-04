@@ -10,6 +10,9 @@
   url = "http://myhost/resource/${arg:id}/${env:FOO}/${first}"
   body = "file:./files/input_${second}.data"
   mime-type = "application/json"
+  [request.headers]
+    content-type = application/json
+    accept = application/json
 
 [properties]
   first = "body"

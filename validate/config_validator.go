@@ -23,7 +23,9 @@ func ValidateConfig(cfg *config.Config) (*config.Config, error) {
 	resolvedStr := res.Resolve(string(raw))
 
 	var resolved config.Config
-	rw.UnmarshalJson(strings.NewReader(resolvedStr), &resolved)
+	if err = rw.UnmarshalJson(strings.NewReader(resolvedStr), &resolved); err != nil {
+		return cfg, err
+	}
 
 	if err = ValidateStruct(resolved); err != nil {
 		return cfg, err
