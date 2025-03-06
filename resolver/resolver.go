@@ -10,10 +10,10 @@ import (
 )
 
 var (
-	regToken = regexp.MustCompile(`(?U)\${(.*)}`) // matches a "${name:value}" token, captures "name:token"
+	regToken = regexp.MustCompile(`(?U)\${(.*)}`) // matches a "${type:value}" token, captures "type:token"
 )
 
-// A Resolver is used to convert property tokens in the form '${token-name} into actual data.
+// A Resolver is used to convert property tokens in the form '${type:value}' into actual data.
 type Resolver interface {
 	// resolves all tokens in the string and returns the result
 	Resolve(input string) (string, error)

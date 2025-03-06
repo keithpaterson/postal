@@ -3,10 +3,11 @@ package config
 import "slices"
 
 const (
+	// default JWT algorithm if it is not otherwise specified
 	DefaultAlgorithm = "HS256"
 )
 
-// algorithm naIDsmes
+// algorithm IDs
 const (
 	AlgNone JWTAlgorithm = iota
 	AlgHS256
@@ -29,6 +30,7 @@ const (
 
 type JWTAlgorithm int
 
+// JWT Algorithm names used in config files
 var algorithmNames = []string{
 	"None",
 	"HS256", "HS384", "HS512",

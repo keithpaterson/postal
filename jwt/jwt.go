@@ -13,7 +13,7 @@ type jwtBuilder struct {
 	jwt config.JWTConfig
 }
 
-// NewBuilder retuns a factory used to compose as JWT token from config data
+// NewBuilder retuns a factory used to compose a JWT token from config data
 func NewBuilder() *jwtBuilder {
 	return &jwtBuilder{log: logging.NamedLogger("jwt")}
 }

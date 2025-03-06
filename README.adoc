@@ -14,3 +14,5 @@ This tool can then be used to:
 ** you can pre-configure build vs. prod vs. test settings independently
    and concatenate them via the command line to compose your configuration
 
+This is a Work-In-Progress and is not yet fully featured.
+
