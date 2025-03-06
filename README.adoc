@@ -10,6 +10,7 @@ This tool can then be used to:
 
 * automate testing against endpoints,
 * simplify manual testing for endpoint developers
-* share configurations via configuration files committed to SCM.
+* share configurations via files committed to SCM.
 ** you can pre-configure build vs. prod vs. test settings independently
    and concatenate them via the command line to compose your configuration
+

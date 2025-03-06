@@ -38,6 +38,12 @@ var algorithmNames = []string{
 	//unsupported: "EDDSA",
 }
 
+// JWTConfig holds the the data used to generate a JSON Web Token.
+//
+// Claims are all the JWT clams as name=value pairs
+//
+// SigningKey is the key used to sign the token; it is not recommended to store this value in your configuration
+// files, but you can supply it on the command-line
 type JWTConfig struct {
 	Header     JWTHeader `toml:"header,omitempty"      validate:"required"`
 	Claims     JWTClaims `toml:"claims,omitempty"      validate:"required,dive,gt=0"`

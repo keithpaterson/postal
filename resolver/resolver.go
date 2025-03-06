@@ -13,6 +13,7 @@ var (
 	regToken = regexp.MustCompile(`(?U)\${(.*)}`) // matches a "${name:value}" token, captures "name:token"
 )
 
+// A Resolver is used to convert property tokens in the form '${token-name} into actual data.
 type Resolver interface {
 	// resolves all tokens in the string and returns the result
 	Resolve(input string) (string, error)

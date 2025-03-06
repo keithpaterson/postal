@@ -24,6 +24,15 @@ func NamedLogger(name string) *zap.SugaredLogger {
 	return root.Named(name)
 }
 
+// Setup initializes the logging subsystem
+//
+// 'debug' indicates whether debug message should be logged
+//
+// 'logfileName' and 'errFileName' specify where the logs should be directed.
+// If not otherwise specified, will use "console" and "stderr" respectively.
+//
+// If 'logfileName' is not-empty and 'errfileName' is empty, then all logs will
+// directed to the file indicated by 'logfileName'
 func Setup(debug bool, logfileName string, errfileName string) {
 	if root != nil {
 		return

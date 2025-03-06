@@ -9,7 +9,7 @@ import (
 	"github.com/keithpaterson/resweave-utils/utility/rw"
 )
 
-// Validate resolves tokens in the config data, validates the result and returns a new (valid) config object
+// ValidateConfig resolves tokens in the config data, validates the result and returns a new (valid) config object
 //
 // If validation fails, returns the original config object with the error.
 func ValidateConfig(cfg *config.Config) (*config.Config, error) {
