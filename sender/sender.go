@@ -68,7 +68,7 @@ func (s *rootSender) Send(cfg *config.Config) error {
 		e := native.NewSender(s.log)
 		return e.Send(actualCfg)
 	case CurlSender:
-		e := curl.NewSender()
+		e := curl.NewSender(s.log)
 		return e.Send(actualCfg)
 	default:
 		return errors.New(errMsgInvalid)

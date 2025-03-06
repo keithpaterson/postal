@@ -3,13 +3,16 @@ package curl
 import (
 	"errors"
 	"postal/config"
+
+	"go.uber.org/zap"
 )
 
 type sender struct {
+	log *zap.SugaredLogger
 }
 
-func NewSender() *sender {
-	return &sender{}
+func NewSender(log *zap.SugaredLogger) *sender {
+	return &sender{log: log.Named("curl")}
 }
 
 func (s *sender) Send(cfg *config.Config) error {
