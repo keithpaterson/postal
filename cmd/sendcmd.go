@@ -20,7 +20,7 @@ const (
 	jwtFlag           = "jwt"
 	algFlag, aFlag    = "alg", "a"
 	headerFlag, hFlag = "header", "H"
-	execFlag          = "using"
+	usingFlag         = "using"
 )
 
 var (
@@ -34,7 +34,7 @@ func NewSendCommand() *cobra.Command {
 		Run:   sendMessage,
 	}
 
-	cmd.Flags().String(execFlag, sender.NativeSenderName, fmt.Sprintf("Identifies which executor to use: one of [%s]", senderNames))
+	cmd.Flags().String(usingFlag, sender.NativeSenderName, fmt.Sprintf("Identifies which sender to use: one of [%s]", senderNames))
 	cmd.Flags().StringArrayP(fileFlag, fFlag, []string{}, "config file")
 	cmd.Flags().StringArrayP(propFlag, pFlag, []string{}, "one or more properties (key=value)")
 	cmd.Flags().StringP(methodFlag, mFlag, "", "HTTP method")
@@ -82,7 +82,7 @@ func sendMessageE(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	name, _ := cmd.Flags().GetString(execFlag)
+	name, _ := cmd.Flags().GetString(usingFlag)
 
 	log.Debug("dryRun:", dryRun)
 	log.Debugf("%#v", *cfg)
