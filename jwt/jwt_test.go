@@ -3,7 +3,6 @@ package jwt
 import (
 	"fmt"
 	"postal/config"
-	"postal/logging"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -40,11 +39,16 @@ var _ = Describe("JWT", func() {
 		err       error
 	}
 
+	var (
+		builder *jwtBuilder
+	)
+
+	BeforeEach(func() {
+		builder = NewBuilder()
+	})
+
 	DescribeTable("MakeToken",
 		func(jwtCfg config.JWTConfig, expect expectation) {
-			// Arrange
-			builder := NewBuilder(logging.Logger())
-
 			// Act
 			actual, err := builder.MakeToken(jwtCfg)
 
@@ -72,7 +76,6 @@ var _ = Describe("JWT", func() {
 			func(alg config.JWTAlgorithm, keyval string) {
 				// Arrange
 				cfg := makeConfig(alg, fmt.Sprintf("string:%s", keyval))
-				builder := NewBuilder(logging.Logger())
 
 				// Act
 				actual, err := builder.MakeToken(cfg)
@@ -90,7 +93,6 @@ var _ = Describe("JWT", func() {
 			func(alg config.JWTAlgorithm, keyval string) {
 				// Arrange
 				cfg := makeConfig(alg, fmt.Sprintf("pemdata:%s", keyval))
-				builder := NewBuilder(logging.Logger())
 
 				// Act
 				actual, err := builder.MakeToken(cfg)
@@ -109,7 +111,6 @@ var _ = Describe("JWT", func() {
 			func(alg config.JWTAlgorithm, keyval string) {
 				// Arrange
 				cfg := makeConfig(alg, fmt.Sprintf("pemdata:%s", keyval))
-				builder := NewBuilder(logging.Logger())
 
 				// Act
 				actual, err := builder.MakeToken(cfg)
@@ -127,7 +128,6 @@ var _ = Describe("JWT", func() {
 			func(alg config.JWTAlgorithm, keyval string) {
 				// Arrange
 				cfg := makeConfig(alg, fmt.Sprintf("pemdata:%s", keyval))
-				builder := NewBuilder(logging.Logger())
 
 				// Act
 				actual, err := builder.MakeToken(cfg)

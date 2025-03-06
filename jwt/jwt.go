@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"postal/config"
+	"postal/logging"
 
 	"github.com/golang-jwt/jwt/v5"
 	"go.uber.org/zap"
@@ -12,10 +13,12 @@ type jwtBuilder struct {
 	jwt config.JWTConfig
 }
 
-func NewBuilder(log *zap.SugaredLogger) *jwtBuilder {
-	return &jwtBuilder{log: log.Named("jwt")}
+// NewBuilder retuns a factory used to compose as JWT token from config data
+func NewBuilder() *jwtBuilder {
+	return &jwtBuilder{log: logging.NamedLogger("jwt")}
 }
 
+// MakeToken builds a new JWT token using the configuration data.
 func (b *jwtBuilder) MakeToken(cfg config.JWTConfig) (string, error) {
 	b.jwt = cfg
 	claims := make(jwt.MapClaims)
