@@ -27,6 +27,7 @@ Resolver supports the following token types:
 		  During resolution, the token is replaced with the value of the named property.
 	"env"   : "value" is the name of an environment variable.
 		  During resolution, the token is replaced with the value of the environment variable.
+	"jwt"   : "value" must be "token".  The token is replaced wtih the signed JWT token string.
 	"date"|"time"|"datetime" : "value" specifies a date, time, or date+time expression.
 	"epoch" : "value" is the number of seconds since the Unix epoch (January 1, 1970 UTC)
 

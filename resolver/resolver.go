@@ -36,6 +36,7 @@ func NewResolver(config *config.Config) *rootResolver {
 		"date":     dtr,
 		"time":     dtr,
 		"epoch":    dtr,
+		"jwt":      newJWTResolver(root),
 	}
 	return root
 }
