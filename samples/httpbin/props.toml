@@ -1,0 +1,5 @@
+# Properties we can use in all the test toml files
+[properties]
+  first = "one"
+  second = 2
+

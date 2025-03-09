@@ -1,0 +1,14 @@
+# JWT token; you can append this for any request
+[jwt]
+  [jwt.header]
+    alg = "HS256" # this is default, but you can specify this elsewhere
+
+  [jwt.claims]
+    iss = "foo"
+    sub = "this=x,that=foo,those=bar"
+    aud = "urn:myThingamabob"
+    exp = "9876543210"
+    iat = "1234567890"
+    nbf = "1029384756"
+    jti = "yeah,whatevs"
+  
