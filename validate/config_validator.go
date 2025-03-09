@@ -2,9 +2,10 @@ package validate
 
 import (
 	"encoding/json"
-	"postal/config"
-	"postal/resolver"
 	"strings"
+
+	"github.com/keithpaterson/postal/config"
+	"github.com/keithpaterson/postal/resolver"
 
 	"github.com/keithpaterson/resweave-utils/utility/rw"
 )

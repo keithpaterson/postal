@@ -3,7 +3,8 @@ package native
 import (
 	"fmt"
 	"net/url"
-	"postal/config"
+
+	"github.com/keithpaterson/postal/config"
 
 	"go.uber.org/zap"
 )

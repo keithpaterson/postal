@@ -2,7 +2,8 @@ package jwt
 
 import (
 	"fmt"
-	"postal/config"
+
+	"github.com/keithpaterson/postal/config"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

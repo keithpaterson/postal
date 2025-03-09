@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"strings"
 
-	"postal/config"
-	"postal/logging"
-	"postal/sender/curl"
-	"postal/sender/native"
-	"postal/validate"
+	"github.com/keithpaterson/postal/config"
+	"github.com/keithpaterson/postal/logging"
+	"github.com/keithpaterson/postal/sender/curl"
+	"github.com/keithpaterson/postal/sender/native"
+	"github.com/keithpaterson/postal/validate"
 
 	"go.uber.org/zap"
 )

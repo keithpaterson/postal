@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/spf13/cobra"
 
-	"postal/cmd"
-	"postal/logging"
+	"github.com/keithpaterson/postal/cmd"
+	"github.com/keithpaterson/postal/logging"
 )
 
 func main() {

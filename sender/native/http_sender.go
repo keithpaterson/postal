@@ -7,9 +7,10 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"postal/config"
-	"postal/logging"
 	"strings"
+
+	"github.com/keithpaterson/postal/config"
+	"github.com/keithpaterson/postal/logging"
 
 	"github.com/keithpaterson/resweave-utils/client"
 	"github.com/keithpaterson/resweave-utils/header"

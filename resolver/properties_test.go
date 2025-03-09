@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	"postal/config"
+	"github.com/keithpaterson/postal/config"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

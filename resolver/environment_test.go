@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	"postal/config"
+	"github.com/keithpaterson/postal/config"
 
 	"github.com/keithpaterson/go-tools/env"
 

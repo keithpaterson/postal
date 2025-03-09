@@ -2,7 +2,8 @@ package curl
 
 import (
 	"errors"
-	"postal/config"
+
+	"github.com/keithpaterson/postal/config"
 
 	"go.uber.org/zap"
 )

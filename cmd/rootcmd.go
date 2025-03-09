@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"postal/logging"
+	"github.com/keithpaterson/postal/logging"
 
 	"github.com/spf13/cobra"
 )

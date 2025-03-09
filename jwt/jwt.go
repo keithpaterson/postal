@@ -1,8 +1,8 @@
 package jwt
 
 import (
-	"postal/config"
-	"postal/logging"
+	"github.com/keithpaterson/postal/config"
+	"github.com/keithpaterson/postal/logging"
 
 	"github.com/golang-jwt/jwt/v5"
 	"go.uber.org/zap"

@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"postal/config"
 	"strconv"
 	"strings"
+
+	"github.com/keithpaterson/postal/config"
 
 	"github.com/golang-jwt/jwt/v5"
 )

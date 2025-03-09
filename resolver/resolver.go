@@ -1,10 +1,11 @@
 package resolver
 
 import (
-	"postal/config"
-	"postal/logging"
 	"regexp"
 	"strings"
+
+	"github.com/keithpaterson/postal/config"
+	"github.com/keithpaterson/postal/logging"
 
 	"go.uber.org/zap"
 )

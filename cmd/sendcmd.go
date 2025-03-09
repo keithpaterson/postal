@@ -3,10 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"postal/config"
-	"postal/logging"
-	"postal/sender"
 	"strings"
+
+	"github.com/keithpaterson/postal/config"
+	"github.com/keithpaterson/postal/logging"
+	"github.com/keithpaterson/postal/sender"
 
 	"github.com/spf13/cobra"
 )

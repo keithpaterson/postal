@@ -1,8 +1,8 @@
-module postal
+module github.com/keithpaterson/postal
 
 go 1.23.0
 
-toolchain go1.23.6
+toolchain go1.23.7
 
 require (
 	github.com/BurntSushi/toml v1.4.0

@@ -1,9 +1,10 @@
 package resolver
 
 import (
-	"postal/config"
 	"strconv"
 	"time"
+
+	"github.com/keithpaterson/postal/config"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

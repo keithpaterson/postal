@@ -1,7 +1,7 @@
 package resolver
 
 import (
-	"postal/jwt"
+	"github.com/keithpaterson/postal/jwt"
 
 	"github.com/keithpaterson/resweave-utils/logging"
 )
