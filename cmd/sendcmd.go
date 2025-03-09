@@ -12,14 +12,15 @@ import (
 )
 
 const (
-	fileFlag, fFlag   = "file", "f"
-	propFlag, pFlag   = "prop", "p"
-	methodFlag, mFlag = "method", "m"
-	urlFlag, uFlag    = "url", "u"
-	bodyFlag, bFlag   = "body", "b"
-	jwtFlag           = "jwt"
 	algFlag, aFlag    = "alg", "a"
+	bodyFlag, bFlag   = "body", "b"
+	fileFlag, fFlag   = "file", "f"
 	headerFlag, hFlag = "header", "H"
+	jwtFlag           = "jwt"
+	methodFlag, mFlag = "method", "m"
+	propFlag, pFlag   = "prop", "p"
+	signingKeyFlag    = "signing-key"
+	urlFlag, uFlag    = "url", "u"
 	usingFlag         = "using"
 )
 
@@ -34,15 +35,16 @@ func NewSendCommand() *cobra.Command {
 		Run:   sendMessage,
 	}
 
-	cmd.Flags().String(usingFlag, sender.NativeSenderName, fmt.Sprintf("Identifies which sender to use: one of [%s]", senderNames))
-	cmd.Flags().StringArrayP(fileFlag, fFlag, []string{}, "config file")
-	cmd.Flags().StringArrayP(propFlag, pFlag, []string{}, "one or more properties (key=value)")
-	cmd.Flags().StringP(methodFlag, mFlag, "", "HTTP method")
-	cmd.Flags().StringP(urlFlag, uFlag, "", "URL")
-	cmd.Flags().StringP(bodyFlag, bFlag, "", "body specification")
-	cmd.Flags().StringArray(jwtFlag, []string{}, "one or more JWT claims (key=value)")
-	cmd.Flags().StringArrayP(headerFlag, hFlag, []string{}, "one or HTTP headers (key=value)")
 	cmd.Flags().StringP(algFlag, aFlag, config.DefaultAlgorithm, "JWT algorithm")
+	cmd.Flags().StringP(bodyFlag, bFlag, "", "body specification")
+	cmd.Flags().StringArrayP(fileFlag, fFlag, []string{}, "config file")
+	cmd.Flags().StringArrayP(headerFlag, hFlag, []string{}, "one or HTTP headers (key=value)")
+	cmd.Flags().StringArray(jwtFlag, []string{}, "one or more JWT claims (key=value)")
+	cmd.Flags().StringP(methodFlag, mFlag, "", "HTTP method")
+	cmd.Flags().StringArrayP(propFlag, pFlag, []string{}, "one or more properties (key=value)")
+	cmd.Flags().String(signingKeyFlag, "", "your signing key; used to sign the JWT token")
+	cmd.Flags().StringP(urlFlag, uFlag, "", "URL")
+	cmd.Flags().String(usingFlag, sender.NativeSenderName, fmt.Sprintf("Identifies which sender to use: one of [%s]", senderNames))
 
 	cmd.MarkFlagRequired("file")
 
@@ -78,7 +80,7 @@ func sendMessageE(cmd *cobra.Command, _ []string) error {
 	if err = processRequestArgs(cmd, cfg); err != nil {
 		return err
 	}
-	if err = processJWTClaims(cmd, cfg); err != nil {
+	if err = processJWT(cmd, cfg); err != nil {
 		return err
 	}
 
@@ -183,8 +185,16 @@ func processRequestHeaders(cmd *cobra.Command, cfg *config.Config) error {
 	return nil
 }
 
-func processJWTClaims(cmd *cobra.Command, cfg *config.Config) error {
+func processJWT(cmd *cobra.Command, cfg *config.Config) error {
+
 	var err error
+	if cmd.Flags().Changed(signingKeyFlag) {
+		var key string
+		if key, err = cmd.Flags().GetString(signingKeyFlag); err != nil {
+			return fmt.Errorf("failed to process JWT signing key: %w", err)
+		}
+		cfg.JWT.SigningKey = key
+	}
 
 	if cmd.Flags().Changed(algFlag) {
 		var algorithm string
@@ -193,6 +203,12 @@ func processJWTClaims(cmd *cobra.Command, cfg *config.Config) error {
 		}
 		cfg.JWT.Header.Alg = algorithm
 	}
+
+	return processJWTClaims(cmd, cfg)
+}
+
+func processJWTClaims(cmd *cobra.Command, cfg *config.Config) error {
+	var err error
 
 	var claims []string
 	if claims, err = cmd.Flags().GetStringArray(jwtFlag); err != nil {
