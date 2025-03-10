@@ -1,12 +1,11 @@
-# Example for composing an url with json body data
+# Example for posting with body data (json)
 # - the body injects the property value 'second'
 # - the body is implicitly "application/json"
 [request]
-  method = "GET"
-  url = "https://httpbin.org/json"
+  method = "POST"
+  url = "https://httpbin.org/anything/1234/${env:FOO}/${first}"
   body = 'json:{"this":"sucks","that":${second}}'
   [request.headers]
     content-type = "application/json"
     accept = "application/json"
-    #authorization = "${jwt:token}"
 
