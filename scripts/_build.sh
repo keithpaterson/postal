@@ -1,5 +1,6 @@
 using colors
 
+_pkg_root=github.com/keithpaterson
 _bin_dir=${_root_dir}/bin
 
 run_build_usage() {
@@ -38,7 +39,7 @@ _build_app() {
   mkdir -p ${_bin_dir}
   #cd ${_root_dir}/${_name}
   _version=$(_run bump -r ${_root_dir} -d -b alpha -s)
-  go build -ldflags="-X postal/cmd.appVersion=${_version}" -o ${_bin_dir}/postal $* ./cmd/postal/main.go
+  go build -ldflags="-X ${_pkg_root}/postal/cmd.appVersion=${_version}" -o ${_bin_dir}/postal $* ./cmd/postal/main.go
 }
 
 _build_generate() {

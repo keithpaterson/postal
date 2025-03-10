@@ -2,9 +2,21 @@ package cmd
 
 import (
 	"fmt"
+	"runtime/debug"
 
 	"github.com/spf13/cobra"
 )
+
+func init() {
+	if info, ok := debug.ReadBuildInfo(); ok {
+		if info.Main.Version != "" {
+			appVersion = info.Main.Version
+		}
+		return
+	}
+	// panic?
+	panic("failed to read build information")
+}
 
 func NewVersionCmd() *cobra.Command {
 	return &cobra.Command{
@@ -14,7 +26,7 @@ func NewVersionCmd() *cobra.Command {
 	}
 }
 
-var appVersion = "1.0.0"
+var appVersion = "(devel)"
 
 func showVersion(_ *cobra.Command, _ []string) {
 	fmt.Println(appVersion)
