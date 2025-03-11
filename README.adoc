@@ -2,6 +2,25 @@
 
 Command-line control and configuration for network communication.
 
+== Installation
+
+You can install postal into your GOPATH from the command-line with
+```
+go install github.com/keithpaterson/postal/cmd/postal@latest
+```
+
+OR you can get the source using git clone and use the `./pkg` script to build
+postal into the local `./bin` folder.
+
+Start with 
+```
+./pkg --help
+```
+
+and go from there
+
+== Objective
+
 The basic premise is to replace Postman with a command-line tool
 that can be configured via toml scripts, environment variables,
 and input parameters.
@@ -14,5 +33,7 @@ This tool can then be used to:
 ** you can pre-configure build vs. prod vs. test settings independently
    and concatenate them via the command line to compose your configuration
 
-This is a Work-In-Progress and is not yet fully featured.
+***
+
+*This is a Work-In-Progress and is not yet fully featured.*
 
