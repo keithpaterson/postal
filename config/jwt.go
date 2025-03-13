@@ -65,7 +65,7 @@ func (a JWTAlgorithm) String() string {
 func (h JWTHeader) Algorithm() JWTAlgorithm {
 	index := slices.Index(algorithmNames, h.Alg)
 	if index < 0 || index >= int(algMax) {
-		index = 0
+		index = int(AlgNone)
 	}
 	return JWTAlgorithm(index)
 }
