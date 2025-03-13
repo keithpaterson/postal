@@ -7,6 +7,10 @@ coverage/
 bin/
 .reports/
 
+# use this folder as scratch space
+# for stuff you never want to even accidentally commit
+scratch/
+
 # tools
 .vscode/
 
