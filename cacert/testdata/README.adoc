@@ -1,0 +1,62 @@
+= Test Certificates and Root Authority
+
+The files in this folder are only meant to be used for testing. The CA root is not intended to be certified or authorized for any
+use except internal (unit) testing and aren't going to help you do anything outside that context.
+
+== (re)generating test certificates:
+
+See https://www.ibm.com/docs/en/zma/2.1.0?topic=zvm-optional-creating-test-root-server-certificates
+
+* `openssl genrsa -des3 -out testCA.key 2048`
++
+_should already have been done_
+
+* `openssl req -x509 -new -nodes -key testCA.key -sha256 -days 1825 -out testCA.pem`
++
+_generates the root certificate; valid for ~5 years (1825 days)_
+
+If/when we end up regenerating this, the values (other than the passphrase) that were used in the questionnaire were:
+
+** Country: `CA`
+** Province: `Ontario`
+** Locality: `Kitchener`
+** Organization: `Postal Unit Tests Ltd`
+** Org. Unit: `MFA`
+** Common Name: `MFA Root Certificate`
+** Email: `test@postal-unittest.io`
+
+* `openssl genrsa -out unittest.key 2048`
++
+_should already have been done: creates a new private key for making certificates_
+
+* `openssl req -new -key unittest.key -out unittest.csr`
++
+_creates a certificate signing request based on the certificate private key_
+
+Use the same information we provided for the Root Certificate, except:
+
+** Common Name: `Unit Test Certificate`
+** Challenge Password: _left blank_
+** Optional Company Name: _left blank_
+
+- As per the IBM instructions, we created an extension file, but we did not bother to add
+  `[alt_names]` for our certificate since this isn't being used for a web service (test or otherwise)
+
+- `openssl x509 -req -in test-server.csr -CA myCA.pem -CAkey myCA.key -CAcreateserial -out test-server.pem -days 1825 -sha256 -extfile test-server.ext`
++
+_generates the certificate using the CSR, CA private key, CA certificate, and the extension file_
+
+== Summary of files:
+
+=== Root Certificate
+
+* `testCA.key`: Root certificate private key
+* `testCA.pem`: Root certificate
+* `testCA.srl`: Root certificate serial numbers (each new certificate is assigned a number which is stored here)
+
+=== Unit Test Certificate
+
+* `unittest.csr`: Test certificate signing request
+* `unittest.ext`: Test certificate extensions
+* `unittest.key`: Test certificate private key
+* `unittest.pem`: Test certificate
