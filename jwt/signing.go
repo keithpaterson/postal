@@ -66,8 +66,8 @@ func (b *jwtBuilder) getSigningMethod() (jwt.SigningMethod, error) {
 	case config.AlgPS512:
 		return jwt.SigningMethodPS512, nil
 	// unsupported:
-	case config.AlgEdDSA:
-		return jwt.SigningMethodEdDSA, nil
+	//case config.AlgEdDSA:
+	//	return jwt.SigningMethodEdDSA, nil
 	default:
 		return nil, fmt.Errorf("%w (%d: %s)", ErrInvalidSigningMethod, b.jwt.Header.Algorithm(), b.jwt.Header.Alg)
 	}
@@ -81,7 +81,7 @@ func (b *jwtBuilder) parseSigningKey(keyType string, value string) (any, error) 
 		rawData, err = b.fromString(value)
 	case "hex":
 		rawData, err = b.fromHexArray(value)
-	case "pemfile":
+	case "file", "pemfile":
 		rawData, err = b.fromFile(value)
 	case "pemdata":
 		rawData = []byte(value)
@@ -133,8 +133,8 @@ func (b *jwtBuilder) decodePemData(data []byte) (any, error) {
 	case config.AlgPS256, config.AlgPS384, config.AlgPS512:
 		return jwt.ParseRSAPrivateKeyFromPEM(data)
 		// unsupported:
-	case config.AlgEdDSA:
-		return jwt.ParseEdPrivateKeyFromPEM(data)
+	//case config.AlgEdDSA:
+	//	return jwt.ParseEdPrivateKeyFromPEM(data)
 	default:
 		// should not happen
 		return nil, ErrParsePEMFailed

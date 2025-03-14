@@ -9,7 +9,7 @@ type RequestConfig struct {
 	// Supported formats:
 	//  "json:{json-data}" : must be a valid json blob after resolving.
 	//                       sets "Content-Type" header to "application/json"
-	//  "file:file-name"   : load body data from a file.  Filename must be valid after resolving.
+	//  "file:<filename>"  : load body data from a file.  <filename> must be valid after resolving.
 	//                       you should include the "Content-Type" header (it is not inferred)
 	Body string `toml:"body,omitempty"                validate:"omitempty,gt=0"`
 	// Headers are name=value pairs for any request headers you need.

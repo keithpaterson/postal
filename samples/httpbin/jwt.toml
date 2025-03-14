@@ -1,7 +1,7 @@
 # JWT token; you can append this for any request
 [jwt]
   [jwt.header]
-    alg = "HS256" # this is default, but you can specify this elsewhere
+    alg = "hs256"
 
   [jwt.claims]
     iss = "foo"
