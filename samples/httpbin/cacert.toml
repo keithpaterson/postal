@@ -1,0 +1,4 @@
+[cacert]
+  pool = "system"
+  ca-cert = "file:../../testdata/testCA.crt"
+  certificates = [ "file:../../testdata/unittest" ] # implies "unittest.pem" and "unittest.key"

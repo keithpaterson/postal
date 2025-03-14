@@ -2,6 +2,7 @@ package native
 
 import (
 	"bytes"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"io"
@@ -9,11 +10,13 @@ import (
 	"os"
 	"strings"
 
+	"github.com/keithpaterson/postal/cacert"
 	"github.com/keithpaterson/postal/config"
 	"github.com/keithpaterson/postal/logging"
 
 	"github.com/keithpaterson/resweave-utils/client"
 	"github.com/keithpaterson/resweave-utils/header"
+	ulog "github.com/keithpaterson/resweave-utils/logging"
 	"go.uber.org/zap"
 )
 
@@ -47,6 +50,8 @@ func (s *httpSender) execute() error {
 
 	var resp *http.Response
 	c := client.DefaultHTTPClient().WithLogger(logging.Logger())
+	s.configureTLS(c.Client)
+
 	if resp, err = c.Execute(req); err != nil {
 		return err
 	}
@@ -59,6 +64,29 @@ func (s *httpSender) execute() error {
 	}
 	fmt.Println("\nresponse:\n>>>\n", string(data), "\n<<<")
 
+	return nil
+}
+
+func (s *httpSender) configureTLS(client *http.Client) error {
+	if s.cfg.Cacert.Pool() != config.CertPoolNone {
+		parser := cacert.FromConfig(s.cfg.Cacert)
+		pool, err := parser.GetCertificatePool()
+		if err != nil {
+			s.log.Errorw("execute", ulog.LogKeyStatus, "failed to build cert pool", ulog.LogKeyError, err)
+			return fmt.Errorf("failed to configure TLS: %w", err)
+		}
+		certificates, err := parser.GetCertificates()
+		if err != nil {
+			s.log.Errorw("execute", ulog.LogKeyStatus, "failed to build certificate list", ulog.LogKeyError, err)
+			return fmt.Errorf("failed to configure TLS: %w", err)
+		}
+		client.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs:      pool,
+				Certificates: certificates,
+			},
+		}
+	}
 	return nil
 }
 

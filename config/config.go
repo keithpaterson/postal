@@ -49,13 +49,16 @@ var (
 type Config struct {
 	Request    RequestConfig `toml:"request,omitempty"    validate:"required"`
 	JWT        JWTConfig     `toml:"jwt,omitempty"        validate:"omitempty"`
+	Cacert     CacertConfig  `toml:"cacert,omitempty"     validate:"omitempty"`
 	Properties Properties    `toml:"properties,omitempty" validate:"omitempty,dive,gt=0"`
 }
 
 type Properties map[string]any
 
 func NewConfig() *Config {
-	return &Config{}
+	cfg := &Config{}
+	cfg.Cacert.setDefaults()
+	return cfg
 }
 
 // Load populates the configuration using the toml data stored in the reader.

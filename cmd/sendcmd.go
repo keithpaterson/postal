@@ -15,6 +15,7 @@ import (
 const (
 	algFlag, aFlag    = "alg", "a"
 	bodyFlag, bFlag   = "body", "b"
+	cacertFlag        = "cacert"
 	fileFlag, fFlag   = "file", "f"
 	headerFlag, hFlag = "header", "H"
 	jwtFlag           = "jwt"
@@ -35,9 +36,15 @@ func NewSendCommand() *cobra.Command {
 		Short: "send a message",
 		Run:   sendMessage,
 	}
+	// TODO(keithpaterson): add some additional description for some of the formats, e.g.
+	//  body (string:, file, etc.)
+	//  cacert (string: pemfile:, pemdata:, etc.)
+	//  signing-key (string:, hex:, etc.)
+	//  ...
 
 	cmd.Flags().StringP(algFlag, aFlag, config.DefaultAlgorithm, "JWT algorithm")
 	cmd.Flags().StringP(bodyFlag, bFlag, "", "body specification")
+	cmd.Flags().String(cacertFlag, "", "CA certification specification")
 	cmd.Flags().StringArrayP(fileFlag, fFlag, []string{}, "config file")
 	cmd.Flags().StringArrayP(headerFlag, hFlag, []string{}, "one or HTTP headers (key=value)")
 	cmd.Flags().StringArray(jwtFlag, []string{}, "one or more JWT claims (key=value)")
