@@ -1,6 +1,9 @@
 package config
 
-import "slices"
+import (
+	"slices"
+	"strings"
+)
 
 const (
 	// default JWT algorithm if it is not otherwise specified
@@ -32,12 +35,12 @@ type JWTAlgorithm int
 
 // JWT Algorithm names used in config files
 var algorithmNames = []string{
-	"None",
-	"HS256", "HS384", "HS512",
-	"RS256", "RS384", "RS512",
-	"ES256", "ES384", "ES512",
-	"PS256", "PS384", "P5512",
-	//unsupported: "EDDSA",
+	"none",
+	"hs256", "hs384", "hs512",
+	"rs256", "rs384", "rs512",
+	"es256", "es384", "es512",
+	"ps256", "ps384", "p5512",
+	//unsupported: "eddsa",
 }
 
 // JWTConfig holds the the data used to generate a JSON Web Token.
@@ -53,7 +56,7 @@ type JWTConfig struct {
 }
 
 type JWTHeader struct {
-	Alg string `toml:"alg,required" validate:"required,oneof=None HS256 HS384 HS512 RS256 RS384 RS512 ES256 ES384 ES512 PS256 PS384 P5512 EDDSA"`
+	Alg string `toml:"alg,required" validate:"required,oneof=none hs256 hs384 hs512 rs256 rs384 rs512 es256 es384 es512 ps256 ps384 p5512 eddsa"`
 }
 
 type JWTClaims map[string]string
@@ -63,7 +66,7 @@ func (a JWTAlgorithm) String() string {
 }
 
 func (h JWTHeader) Algorithm() JWTAlgorithm {
-	index := slices.Index(algorithmNames, h.Alg)
+	index := slices.Index(algorithmNames, strings.ToLower(h.Alg))
 	if index < 0 || index >= int(algMax) {
 		index = int(AlgNone)
 	}
