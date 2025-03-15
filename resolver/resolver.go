@@ -20,6 +20,6 @@ func NewResolver(cfg *config.Config) *wrapResolver {
 func (r *wrapResolver) Resolve(input string) string {
 	return resolver.NewResolver(&resolver.ResolverConfig{Properties: resolver.Properties(r.cfg.Properties)}).
 		WithStandardResolvers().
-		WithResolver("jwt", newJWTResolver(r.log, &r.cfg.JWT)).
+		WithResolver("jwt", newJWTResolver(r.log, r.cfg.JWT)).
 		Resolve(input)
 }

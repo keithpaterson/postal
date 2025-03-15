@@ -14,20 +14,18 @@ var _ = Describe("JWT Resolver", func() {
 		ok    bool
 	}
 	var (
-		cfg      *config.Config
 		resolver *jwtResolver
 	)
 	BeforeEach(func() {
-		cfg = config.NewConfig()
-		resolver = newJWTResolver(logging.NamedLogger("test"), &cfg.JWT)
+		resolver = newJWTResolver(logging.NamedLogger("test"), config.NewConfig().JWT)
 	})
 
 	DescribeTable("resolve",
 		func(tokens []string, expect []expectation) {
 			// Arrange
-			cfg.JWT.Header.Alg = config.AlgHS256.String()
-			cfg.JWT.Claims = config.JWTClaims{"iss": "test", "test": "yup,this-is;a-test"}
-			cfg.JWT.SigningKey = "booga booga"
+			resolver.cfg.Header.Alg = config.AlgHS256.String()
+			resolver.cfg.Claims = config.JWTClaims{"iss": "test", "test": "yup,this-is;a-test"}
+			resolver.cfg.SigningKey = "booga booga"
 
 			// Act & Assert
 			for index, token := range tokens {

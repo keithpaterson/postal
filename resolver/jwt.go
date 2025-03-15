@@ -13,10 +13,10 @@ type jwtResolver struct {
 	resolver.ResolverImpl
 
 	log *zap.SugaredLogger
-	cfg *config.JWTConfig
+	cfg config.JWTConfig
 }
 
-func newJWTResolver(log *zap.SugaredLogger, cfg *config.JWTConfig) *jwtResolver {
+func newJWTResolver(log *zap.SugaredLogger, cfg config.JWTConfig) *jwtResolver {
 	return &jwtResolver{log: log.Named("jwt"), cfg: cfg}
 }
 
@@ -27,7 +27,7 @@ func (r *jwtResolver) Resolve(name string, token string) (string, bool) {
 	}
 
 	builder := jwt.NewBuilder()
-	value, err := builder.MakeToken(*r.cfg)
+	value, err := builder.MakeToken(r.cfg)
 	if err != nil {
 		r.log.Errorw("resolve", logging.LogKeyError, err)
 		return token, false
