@@ -119,11 +119,7 @@ func (s *httpSender) getBodyData() ([]byte, error) {
 			s.cfg.Request.Headers["content-type"] = header.MimeTypeJson
 		}
 	case "file":
-		var file *os.File
-		if file, err = os.Open(data); err != nil {
-			return nil, err
-		}
-		if body, err = io.ReadAll(file); err != nil {
+		if body, err = os.ReadFile(data); err != nil {
 			return nil, err
 		}
 	default:
