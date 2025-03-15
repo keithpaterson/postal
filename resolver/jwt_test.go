@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"github.com/keithpaterson/postal/config"
+	"github.com/keithpaterson/postal/logging"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -14,13 +15,11 @@ var _ = Describe("JWT Resolver", func() {
 	}
 	var (
 		cfg      *config.Config
-		root     *rootResolver
 		resolver *jwtResolver
 	)
 	BeforeEach(func() {
 		cfg = config.NewConfig()
-		root = NewResolver(cfg)
-		resolver = newJWTResolver(root)
+		resolver = newJWTResolver(logging.NamedLogger("test"), &cfg.JWT)
 	})
 
 	DescribeTable("resolve",
@@ -32,7 +31,7 @@ var _ = Describe("JWT Resolver", func() {
 
 			// Act & Assert
 			for index, token := range tokens {
-				actual, ok := resolver.resolve("jwt", token)
+				actual, ok := resolver.Resolve("jwt", token)
 				Expect(actual).To(Equal(expect[index].value))
 				Expect(ok).To(Equal(expect[index].ok))
 			}
@@ -45,7 +44,7 @@ var _ = Describe("JWT Resolver", func() {
 		// Arrange
 
 		// Act
-		actual, ok := resolver.resolve("crumb", "fling")
+		actual, ok := resolver.Resolve("crumb", "fling")
 
 		// Assert
 		Expect(ok).To(BeFalse())

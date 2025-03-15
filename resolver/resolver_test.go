@@ -12,7 +12,7 @@ var _ = Describe("Resolver", func() {
 	var (
 		cfg      *config.Config
 		origEnv  env.Setup
-		resolver *rootResolver
+		resolver *wrapResolver
 	)
 	BeforeEach(func() {
 		cfg = config.NewConfig()

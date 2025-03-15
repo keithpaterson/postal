@@ -1,27 +1,33 @@
 package resolver
 
 import (
+	"github.com/keithpaterson/postal/config"
 	"github.com/keithpaterson/postal/jwt"
 
+	"github.com/keithpaterson/go-tools/resolver"
 	"github.com/keithpaterson/resweave-utils/logging"
+	"go.uber.org/zap"
 )
 
 type jwtResolver struct {
-	resolverImpl
+	resolver.ResolverImpl
+
+	log *zap.SugaredLogger
+	cfg *config.JWTConfig
 }
 
-func newJWTResolver(root *rootResolver) *jwtResolver {
-	return &jwtResolver{resolverImpl{root: root, log: root.log.Named("jwt")}}
+func newJWTResolver(log *zap.SugaredLogger, cfg *config.JWTConfig) *jwtResolver {
+	return &jwtResolver{log: log.Named("jwt"), cfg: cfg}
 }
 
 // only accepts "jwt:token"
-func (r *jwtResolver) resolve(name string, token string) (string, bool) {
+func (r *jwtResolver) Resolve(name string, token string) (string, bool) {
 	if name != "jwt" || token != "token" {
 		return token, false
 	}
 
 	builder := jwt.NewBuilder()
-	value, err := builder.MakeToken(r.root.config.JWT)
+	value, err := builder.MakeToken(*r.cfg)
 	if err != nil {
 		r.log.Errorw("resolve", logging.LogKeyError, err)
 		return token, false
