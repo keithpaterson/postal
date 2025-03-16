@@ -51,13 +51,13 @@ type Config struct {
 	JWT        JWTConfig     `toml:"jwt,omitempty"        validate:"omitempty"`
 	Cacert     CacertConfig  `toml:"cacert,omitempty"     validate:"omitempty"`
 	Properties Properties    `toml:"properties,omitempty" validate:"omitempty,dive,gt=0"`
+	Output     OutputConfig  `toml:"output,omitempty"     validate:"omitempty"`
 }
 
 type Properties map[string]any
 
 func NewConfig() *Config {
-	cfg := &Config{}
-	cfg.Cacert.setDefaults()
+	cfg := &Config{Cacert: newCacertConfig(), Output: newOutputConfig()}
 	return cfg
 }
 

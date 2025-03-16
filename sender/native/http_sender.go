@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -13,6 +12,7 @@ import (
 	"github.com/keithpaterson/postal/cacert"
 	"github.com/keithpaterson/postal/config"
 	"github.com/keithpaterson/postal/logging"
+	"github.com/keithpaterson/postal/output"
 
 	"github.com/keithpaterson/resweave-utils/client"
 	"github.com/keithpaterson/resweave-utils/header"
@@ -57,12 +57,10 @@ func (s *httpSender) execute() error {
 	}
 	defer resp.Body.Close()
 
-	// how to parse the response?
-	var data []byte
-	if data, err = io.ReadAll(resp.Body); err != nil {
-		s.log.Debugw("execute", "response", data)
+	writer := output.NewOutputter(s.cfg)
+	if err = writer.Write(resp); err != nil {
+		return err
 	}
-	fmt.Println("\nresponse:\n>>>\n", string(data), "\n<<<")
 
 	return nil
 }

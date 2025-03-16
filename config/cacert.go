@@ -60,8 +60,8 @@ type CacertConfig struct {
 	CertificateFileExtensions [2]string `toml:"file-ext,omitempty"    validate:"omitempty,len=2,dive,gt=1,startswith=."`
 }
 
-func (c *CacertConfig) setDefaults() {
-	c.PoolName = "none"
+func newCacertConfig() CacertConfig {
+	return CacertConfig{PoolName: "none"}
 }
 
 func (c CacertConfig) Pool() CertPoolType {

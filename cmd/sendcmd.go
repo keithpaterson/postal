@@ -13,48 +13,50 @@ import (
 )
 
 const (
-	algFlag, aFlag    = "alg", "a"
-	bodyFlag, bFlag   = "body", "b"
-	cacertFlag        = "cacert"
-	fileFlag, fFlag   = "file", "f"
-	headerFlag, hFlag = "header", "H"
-	jwtFlag           = "jwt"
-	methodFlag, mFlag = "method", "m"
-	propFlag, pFlag   = "prop", "p"
-	signingKeyFlag    = "signing-key"
-	urlFlag, uFlag    = "url", "u"
-	usingFlag         = "using"
+	algFlag, aFlag      = "alg", "a"
+	bodyFlag, bFlag     = "body", "b"
+	cacertFlag          = "cacert"
+	configFlag, cFlag   = "config", "c"
+	headerFlag, hFlag   = "header", "H"
+	jwtFlag             = "jwt"
+	methodFlag, mFlag   = "method", "m"
+	outFileFlag, fFlag  = "out-file", "f"
+	outFmtFlag, oFlag   = "out-format", "o"
+	propFlag, pFlag     = "prop", "p"
+	signingKeyFlag      = "signing-key"
+	templateFlag, tFlag = "template", "t"
+	urlFlag, uFlag      = "url", "u"
+	usingFlag           = "using"
 )
 
 var (
 	senderNames = strings.Join([]string{sender.NativeSenderName, sender.CurlSenderName}, ", ")
+	outFmtNames = strings.Join([]string{config.OutFmtRaw.String(), config.OutFmtText.String()}, ", ")
 )
 
 func NewSendCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "send",
+		Use:   "send -c filename [-c filename...] [flags]",
 		Short: "send a message",
 		Run:   sendMessage,
 	}
-	// TODO(keithpaterson): add some additional description for some of the formats, e.g.
-	//  body (string:, file, etc.)
-	//  cacert (string: pemfile:, pemdata:, etc.)
-	//  signing-key (string:, hex:, etc.)
-	//  ...
 
 	cmd.Flags().StringP(algFlag, aFlag, config.DefaultAlgorithm, "JWT algorithm")
 	cmd.Flags().StringP(bodyFlag, bFlag, "", "body specification")
 	cmd.Flags().String(cacertFlag, "", "CA certification specification")
-	cmd.Flags().StringArrayP(fileFlag, fFlag, []string{}, "config file")
-	cmd.Flags().StringArrayP(headerFlag, hFlag, []string{}, "one or HTTP headers (key=value)")
+	cmd.Flags().StringArrayP(configFlag, cFlag, []string{}, "one or more config file names")
+	cmd.Flags().StringArrayP(headerFlag, hFlag, []string{}, "one or more HTTP headers (key=value)")
 	cmd.Flags().StringArray(jwtFlag, []string{}, "one or more JWT claims (key=value)")
 	cmd.Flags().StringP(methodFlag, mFlag, "", "HTTP method")
+	cmd.Flags().StringP(outFileFlag, fFlag, "stdout", "specify a filename to write the result into")
+	cmd.Flags().StringP(outFmtFlag, oFlag, "text", fmt.Sprintf("output format, one of [%s]", outFmtNames))
 	cmd.Flags().StringArrayP(propFlag, pFlag, []string{}, "one or more properties (key=value)")
 	cmd.Flags().String(signingKeyFlag, "", "your signing key; used to sign the JWT token")
+	cmd.Flags().StringP(templateFlag, tFlag, "${response:body}", "template for writing text response output")
 	cmd.Flags().StringP(urlFlag, uFlag, "", "URL")
 	cmd.Flags().String(usingFlag, sender.NativeSenderName, fmt.Sprintf("Identifies which sender to use: one of [%s]", senderNames))
 
-	cmd.MarkFlagRequired("file")
+	cmd.MarkFlagRequired(configFlag)
 
 	return cmd
 }
@@ -69,32 +71,15 @@ func sendMessageE(cmd *cobra.Command, _ []string) error {
 	setupLogging(cmd)
 	log := logging.NamedLogger("sendcmd")
 
-	dryRun, _ := cmd.Flags().GetBool(dryRunFlag)
-
-	var err error
-	cfg := config.NewConfig()
-
-	// order is important here:
-	// - config files are lowest-order data sources; bring all of them in first
-	if err = loadConfig(cmd, cfg); err != nil {
-		return err
-	}
-
-	// command-line arguments are higher-order data sources; these supercede anything
-	// spcified in the config files
-	if err = processProperties(cmd, cfg); err != nil {
-		return err
-	}
-	if err = processRequestArgs(cmd, cfg); err != nil {
-		return err
-	}
-	if err = processJWT(cmd, cfg); err != nil {
+	parser := &sendCmdParser{}
+	cfg, err := parser.parseConfig(cmd)
+	if err != nil {
 		return err
 	}
 
 	name, _ := cmd.Flags().GetString(usingFlag)
 
-	log.Debug("dryRun:", dryRun)
+	log.Debug("dryRun:", parser.dryRun)
 	log.Debugf("%#v", *cfg)
 
 	sender, err := sender.NewNamedSender(name)
@@ -104,11 +89,50 @@ func sendMessageE(cmd *cobra.Command, _ []string) error {
 	return sender.Send(cfg)
 }
 
-func loadConfig(cmd *cobra.Command, cfg *config.Config) error {
+type sendCmdParser struct {
+	cmd *cobra.Command
+	cfg *config.Config
+
+	dryRun bool
+}
+
+func (p *sendCmdParser) parseConfig(cmd *cobra.Command) (*config.Config, error) {
+	p.cmd = cmd
+	defer func() { p.cmd = nil; p.cfg = nil }()
+
+	p.dryRun, _ = cmd.Flags().GetBool(dryRunFlag)
+
+	var err error
+	p.cfg = config.NewConfig()
+
+	// order is important here:
+	// - config files are lowest-order data sources; bring all of them in first
+	if err = p.loadConfig(); err != nil {
+		return nil, err
+	}
+
+	// command-line arguments are higher-order data sources; these supercede anything
+	// spcified in the config files
+	if err = p.processProperties(); err != nil {
+		return nil, err
+	}
+	if err = p.processRequestArgs(); err != nil {
+		return nil, err
+	}
+	if err = p.processJWT(); err != nil {
+		return nil, err
+	}
+	if err = p.processOutput(); err != nil {
+		return nil, err
+	}
+	return p.cfg, nil
+}
+
+func (p *sendCmdParser) loadConfig() error {
 	var err error
 	var filenames []string
-	if filenames, err = cmd.Flags().GetStringArray(fileFlag); err != nil {
-		return flagError(fileFlag, err)
+	if filenames, err = p.cmd.Flags().GetStringArray(configFlag); err != nil {
+		return p.flagError(configFlag, err)
 	}
 
 	for _, filename := range filenames {
@@ -117,7 +141,7 @@ func loadConfig(cmd *cobra.Command, cfg *config.Config) error {
 		if file, err = os.Open(filename); err != nil {
 			return fmt.Errorf("failed to open file: %w", err)
 		}
-		if err = cfg.Load(file); err != nil {
+		if err = p.cfg.Load(file); err != nil {
 			file.Close()
 			return fmt.Errorf("failed to load file: %w", err)
 		}
@@ -126,11 +150,11 @@ func loadConfig(cmd *cobra.Command, cfg *config.Config) error {
 	return nil
 }
 
-func processProperties(cmd *cobra.Command, cfg *config.Config) error {
+func (p *sendCmdParser) processProperties() error {
 	var err error
 	var props []string
-	if props, err = cmd.Flags().GetStringArray(propFlag); err != nil {
-		return flagError(propFlag, err)
+	if props, err = p.cmd.Flags().GetStringArray(propFlag); err != nil {
+		return p.flagError(propFlag, err)
 	}
 
 	for _, prop := range props {
@@ -139,48 +163,48 @@ func processProperties(cmd *cobra.Command, cfg *config.Config) error {
 		if key, value, ok = strings.Cut(prop, "="); !ok {
 			return fmt.Errorf("failed to parse property value '%s'", prop)
 		}
-		cfg.Properties[strings.TrimSpace(key)] = strings.TrimSpace(value)
+		p.cfg.Properties[strings.TrimSpace(key)] = strings.TrimSpace(value)
 	}
 
 	return nil
 }
 
-func processRequestArgs(cmd *cobra.Command, cfg *config.Config) error {
+func (p *sendCmdParser) processRequestArgs() error {
 	var err error
 
-	if cmd.Flags().Changed(methodFlag) {
+	if p.cmd.Flags().Changed(methodFlag) {
 		var method string
-		if method, err = cmd.Flags().GetString(methodFlag); err != nil {
-			return flagError(methodFlag, err)
+		if method, err = p.cmd.Flags().GetString(methodFlag); err != nil {
+			return p.flagError(methodFlag, err)
 		}
-		cfg.Request.Method = method
+		p.cfg.Request.Method = method
 	}
 
-	if cmd.Flags().Changed(urlFlag) {
+	if p.cmd.Flags().Changed(urlFlag) {
 		var url string
-		if url, err = cmd.Flags().GetString(urlFlag); err != nil {
-			return flagError(urlFlag, err)
+		if url, err = p.cmd.Flags().GetString(urlFlag); err != nil {
+			return p.flagError(urlFlag, err)
 		}
-		cfg.Request.URL = url
+		p.cfg.Request.URL = url
 	}
 
-	if cmd.Flags().Changed(bodyFlag) {
+	if p.cmd.Flags().Changed(bodyFlag) {
 		var body string
-		if body, err = cmd.Flags().GetString(bodyFlag); err != nil {
-			return flagError(bodyFlag, err)
+		if body, err = p.cmd.Flags().GetString(bodyFlag); err != nil {
+			return p.flagError(bodyFlag, err)
 		}
-		cfg.Request.Body = body
+		p.cfg.Request.Body = body
 		// TODO(keithpaterson): we use the body information to determine Mime Type
 	}
 
-	return processRequestHeaders(cmd, cfg)
+	return p.processRequestHeaders()
 }
 
-func processRequestHeaders(cmd *cobra.Command, cfg *config.Config) error {
+func (p *sendCmdParser) processRequestHeaders() error {
 	var err error
 	var headers []string
-	if headers, err = cmd.Flags().GetStringArray(headerFlag); err != nil {
-		return flagError(headerFlag, err)
+	if headers, err = p.cmd.Flags().GetStringArray(headerFlag); err != nil {
+		return p.flagError(headerFlag, err)
 	}
 
 	for _, header := range headers {
@@ -188,38 +212,38 @@ func processRequestHeaders(cmd *cobra.Command, cfg *config.Config) error {
 		if !ok {
 			return fmt.Errorf("invalid header specification '%s' (expect key=value)", header)
 		}
-		cfg.Request.Headers[key] = value
+		p.cfg.Request.Headers[key] = value
 	}
 	return nil
 }
 
-func processJWT(cmd *cobra.Command, cfg *config.Config) error {
+func (p *sendCmdParser) processJWT() error {
 
 	var err error
-	if cmd.Flags().Changed(signingKeyFlag) {
+	if p.cmd.Flags().Changed(signingKeyFlag) {
 		var key string
-		if key, err = cmd.Flags().GetString(signingKeyFlag); err != nil {
+		if key, err = p.cmd.Flags().GetString(signingKeyFlag); err != nil {
 			return fmt.Errorf("failed to process JWT signing key: %w", err)
 		}
-		cfg.JWT.SigningKey = key
+		p.cfg.JWT.SigningKey = key
 	}
 
-	if cmd.Flags().Changed(algFlag) {
+	if p.cmd.Flags().Changed(algFlag) {
 		var algorithm string
-		if algorithm, err = cmd.Flags().GetString(algFlag); err != nil {
+		if algorithm, err = p.cmd.Flags().GetString(algFlag); err != nil {
 			return fmt.Errorf("failed to process JWT algorithm: %w", err)
 		}
-		cfg.JWT.Header.Alg = algorithm
+		p.cfg.JWT.Header.Alg = algorithm
 	}
 
-	return processJWTClaims(cmd, cfg)
+	return p.processJWTClaims()
 }
 
-func processJWTClaims(cmd *cobra.Command, cfg *config.Config) error {
+func (p *sendCmdParser) processJWTClaims() error {
 	var err error
 
 	var claims []string
-	if claims, err = cmd.Flags().GetStringArray(jwtFlag); err != nil {
+	if claims, err = p.cmd.Flags().GetStringArray(jwtFlag); err != nil {
 		return fmt.Errorf("failed to process JWT claims: %w", err)
 	}
 
@@ -229,13 +253,37 @@ func processJWTClaims(cmd *cobra.Command, cfg *config.Config) error {
 		if key, value, ok = strings.Cut(claim, "="); !ok {
 			return fmt.Errorf("failed to parse JWT claim value '%s'", claim)
 		}
-		cfg.JWT.Claims[strings.TrimSpace(key)] = strings.TrimSpace(value)
+		p.cfg.JWT.Claims[strings.TrimSpace(key)] = strings.TrimSpace(value)
 	}
 
 	return nil
 }
 
-func flagError(name string, err error) error {
+func (p *sendCmdParser) processOutput() error {
+	var err error
+
+	var template string
+	if template, err = p.cmd.Flags().GetString(templateFlag); err != nil {
+		return p.flagError(templateFlag, err)
+	}
+	p.cfg.Output.Template = template
+
+	var outFormat string
+	if outFormat, err = p.cmd.Flags().GetString(outFmtFlag); err != nil {
+		return p.flagError(outFmtFlag, err)
+	}
+	p.cfg.Output.Format = outFormat
+
+	var outFile string
+	if outFile, err = p.cmd.Flags().GetString(outFileFlag); err != nil {
+		return p.flagError(outFileFlag, err)
+	}
+	p.cfg.Output.Filename = outFile
+
+	return nil
+}
+
+func (p *sendCmdParser) flagError(name string, err error) error {
 	if err != nil {
 		return fmt.Errorf("failed to process %s flag: %w", name, err)
 	} else {
