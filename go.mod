@@ -8,7 +8,7 @@ require (
 	github.com/BurntSushi/toml v1.4.0
 	github.com/go-playground/validator/v10 v10.25.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/keithpaterson/go-tools v1.0.3
+	github.com/keithpaterson/go-tools v1.0.4
 	github.com/keithpaterson/resweave-utils v0.2.0
 	github.com/onsi/ginkgo/v2 v2.22.2
 	github.com/onsi/gomega v1.36.2

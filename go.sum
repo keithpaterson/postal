@@ -33,6 +33,8 @@ github.com/keithpaterson/go-tools v1.0.2 h1:FfaUy+BYEdb4iwgUNciUdZxdepj0MFp04iia
 github.com/keithpaterson/go-tools v1.0.2/go.mod h1:6ZOy/dh7GW9oUHxKpu1Y4/rfqQUsYb5V+uxchIOjdIQ=
 github.com/keithpaterson/go-tools v1.0.3 h1:C5BOiQ6Pk/5fcFgXkd87kYLaionRr24OH9Y8tbDzfoY=
 github.com/keithpaterson/go-tools v1.0.3/go.mod h1:6ZOy/dh7GW9oUHxKpu1Y4/rfqQUsYb5V+uxchIOjdIQ=
+github.com/keithpaterson/go-tools v1.0.4 h1:9CLAy+K3jf7Ou9u0nJKXjN/IY1dItLKTtzQg6VRNlj8=
+github.com/keithpaterson/go-tools v1.0.4/go.mod h1:6ZOy/dh7GW9oUHxKpu1Y4/rfqQUsYb5V+uxchIOjdIQ=
 github.com/keithpaterson/resweave-utils v0.2.0 h1:3l+H8gHDQ7f9TP8fOfNoI1Fs1+VzCyVuFEgtDTosqm0=
 github.com/keithpaterson/resweave-utils v0.2.0/go.mod h1:tPRJUisqVz82/HCwsC+pyGIWLQIfnuJABxRGoSc6i04=
 github.com/leodido/go-urn v1.4.0 h1:WT9HwE9SGECu3lg4d/dIA+jxlljEa1/ffXKmRjqdmIQ=
