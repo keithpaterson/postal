@@ -1,6 +1,29 @@
+:sonar-project-id: keithpaterson_postal
+:sonar-badges: https://sonarcloud.io/api/project_badges/measure?project={sonar-project-id}
+:img-quality-gate: {sonar-badges}&metric=alert_status
+:img-coverage: {sonar-badges}&metric=coverage
+:img-maintainability: {sonar-badges}&metric=sqale_rating
+:img-security-rating: {sonar-badges}&metric=security_rating
+:img-reliability: {sonar-badges}&metric=reliability_rating
+:img-techdebt: {sonar-badges}&metric=sqale_index
+:uri-analysis: https://sonarcloud.io/summary/new_code?id={sonar-project-id}
+
 = Postal
 
 Command-line control and configuration for network communication.
+
+== Project Health
+
+[.text-center]
+
+|===
+|image:{img-quality-gate}[Quality Gate,link={uri-analysis}]|image:{img-coverage}[Coverage,link={uri-analysis}] |image:{img-maintainability}[Maintainability,link={uri-analysis}]
+
+|image:{img-reliability}[Reliability,link={uri-analysis}]
+|image:{img-security-rating}[Security Rating,link={uri-analysis}]
+|image:{img-techdebt}[Technical Debt,link={uri-analysis}]
+
+|===
 
 == Installation
 
