@@ -1,81 +1,23 @@
 package jwt
 
+import "github.com/keithpaterson/postal/internal/util/test"
+
 const (
 	testHmacPrivateKey = `This is a terrible HMAC key.`
-
-	testRsaPrivateKey = `-----BEGIN RSA PRIVATE KEY-----
-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
------END RSA PRIVATE KEY-----`
-
-	// ssh-keygen -t ecdsa -m PKCS8 -b 256
-	testEcdsa256PrivateKey = `-----BEGIN PRIVATE KEY-----
-MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgaoyq+eR1joqv8K/N
-R7hBiSuhTK8k5d9bw4Kev6CSYBKhRANCAARv2cZNM26xRmQwSlXUDfUKqxjtFG82
-WoYeqmJA55aJsJpsPeOsHWDhZR8Ye3E4bITQSJrY1wPzob6iGR6kiqgu
------END PRIVATE KEY-----`
-
-	// ssh-keygen -t ecdsa -m PKCS8 -b 384
-	testEcdsa384PrivateKey = `-----BEGIN PRIVATE KEY-----
-MIG2AgEAMBAGByqGSM49AgEGBSuBBAAiBIGeMIGbAgEBBDB8DAN2CO3z1m32kxp5
-bNmX+cdMkFRflp3Yx33wgc8wgL1cZFplbcl84FZ3QRB+7GihZANiAAQ5tGD8IYeQ
-va94PSDIcTlNpDERK+WT5mFuFE6PIufBhFapPytQnOO06oR1VZB2VY+8k0HXPczM
-UthUieSlPPP5qkhhxVv8UAtYuZ+3DAUvtsgnvJq875n0jb3XYC50uTc=
------END PRIVATE KEY-----`
-
-	// ssh-keygen -t ecdsa -m PKCS8 -b 521
-	testEcdsa512PrivateKey = `-----BEGIN PRIVATE KEY-----
-MIHtAgEAMBAGByqGSM49AgEGBSuBBAAjBIHVMIHSAgEBBEGHmDfLGGobv/GkCm+j
-o5VOrpokvHDp+0cu3dJGYFQ2cCgUGS0esZryObzQblrt3qqjHLbg2eDwrit+pl2A
-THOjo6GBiQOBhgAEAeLFSrnnargrUFrEz6/Hv6zuzXigJmjte3ZJjKb6oBcpymyZ
-+vY8Z9fsxS/ODht5D5rIRwM1uWYWadJKE6Jm2lj5AEc2RoZqhVhms4dYGEFHKIl8
-2vC1DZhu5ISyc4qVt9XrBB6UaL/O+TXpmygCRTN6doX2pEEdnlg3vOmBDptfyruH
------END PRIVATE KEY-----`
-
-	// ssh-keygen -t ed25519 -m PKCS8
-	// TODO(keithpaterson): figure out why this isn't working
-	/* disabled
-		testEdDSAPrivateKey = `-----BEGIN OPENSSH PRIVATE KEY-----
-	b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
-	QyNTUxOQAAACA8jcT5k4TIN/P+f04Lp5rZTU/BIES2HVJMg8lCjo3SgwAAAKAviDUIL4g1
-	CAAAAAtzc2gtZWQyNTUxOQAAACA8jcT5k4TIN/P+f04Lp5rZTU/BIES2HVJMg8lCjo3Sgw
-	AAAEDFhTThKSX5HmvPM4woZwsFnQpMZBnxuMxVggkz8/n7MjyNxPmThMg38/5/TgunmtlN
-	T8EgRLYdUkyDyUKOjdKDAAAAHGtlaXRocGF0ZXJzb25AS1dQLU1CUDMubG9jYWwB
-	-----END OPENSSH PRIVATE KEY-----`
-	*/
 )
+
+var (
+	testRsaPrivateKey      string
+	testEcdsa256PrivateKey string
+	testEcdsa384PrivateKey string
+	testEcdsa512PrivateKey string
+	//testEddsaPrivateKey    string
+)
+
+func LoadTestPrivateKeys() {
+	testRsaPrivateKey = test.MustLoadTestString("test_rsa")
+	testEcdsa256PrivateKey = test.MustLoadTestString("test_ecdsa_256")
+	testEcdsa384PrivateKey = test.MustLoadTestString("test_ecdsa_384")
+	testEcdsa512PrivateKey = test.MustLoadTestString("test_ecdsa_512")
+	//testEddsaPrivateKey    = test.MustLoadTestString("test_eddsa")
+}
