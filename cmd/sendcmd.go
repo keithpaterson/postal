@@ -29,11 +29,6 @@ const (
 	usingFlag           = "using"
 )
 
-var (
-	senderNames = strings.Join([]string{sender.NativeSenderName, sender.CurlSenderName}, ", ")
-	outFmtNames = strings.Join([]string{config.OutFmtRaw.String(), config.OutFmtText.String()}, ", ")
-)
-
 func NewSendCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "send -c filename [-c filename...] [flags]",
@@ -49,12 +44,12 @@ func NewSendCommand() *cobra.Command {
 	cmd.Flags().StringArray(jwtFlag, []string{}, "one or more JWT claims (key=value)")
 	cmd.Flags().StringP(methodFlag, mFlag, "", "HTTP method")
 	cmd.Flags().StringP(outFileFlag, fFlag, "stdout", "specify a filename to write the result into")
-	cmd.Flags().StringP(outFmtFlag, oFlag, "text", fmt.Sprintf("output format, one of [%s]", outFmtNames))
+	cmd.Flags().StringP(outFmtFlag, oFlag, "text", fmt.Sprintf("output format, one of [%s]", config.OutFmtNames))
 	cmd.Flags().StringArrayP(propFlag, pFlag, []string{}, "one or more properties (key=value)")
 	cmd.Flags().String(signingKeyFlag, "", "your signing key; used to sign the JWT token")
 	cmd.Flags().StringP(templateFlag, tFlag, "${response:body}", "template for writing text response output")
 	cmd.Flags().StringP(urlFlag, uFlag, "", "URL")
-	cmd.Flags().String(usingFlag, sender.NativeSenderName, fmt.Sprintf("Identifies which sender to use: one of [%s]", senderNames))
+	cmd.Flags().String(usingFlag, sender.NativeSenderName, fmt.Sprintf("Identifies which sender to use: one of [%s]", sender.Names))
 
 	cmd.MarkFlagRequired(configFlag)
 
