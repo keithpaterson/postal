@@ -11,7 +11,6 @@ import (
 
 	"github.com/keithpaterson/postal/cacert"
 	"github.com/keithpaterson/postal/config"
-	"github.com/keithpaterson/postal/logging"
 	"github.com/keithpaterson/postal/output"
 
 	"github.com/keithpaterson/resweave-utils/client"
@@ -49,7 +48,7 @@ func (s *httpSender) execute() error {
 	}
 
 	var resp *http.Response
-	c := client.DefaultHTTPClient().WithLogger(logging.Logger())
+	c := client.NewHTTPClient("test").WithRetryHandler(client.NewRetryCounter(0))
 	s.configureTLS(c.Client)
 
 	if resp, err = c.Execute(req); err != nil {

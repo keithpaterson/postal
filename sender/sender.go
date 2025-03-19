@@ -5,7 +5,7 @@ package sender
 import (
 	"errors"
 	"fmt"
-	"strings"
+	"slices"
 
 	"github.com/keithpaterson/postal/config"
 	"github.com/keithpaterson/postal/logging"
@@ -27,8 +27,12 @@ const (
 	CurlSenderName   = "curl"
 )
 
-const (
-	errMsgInvalid = "invalid sender"
+var (
+	ErrInvalidSender = errors.New("invalid sender")
+)
+
+var (
+	Names = []string{NativeSenderName, CurlSenderName}
 )
 
 type SenderType int
@@ -71,17 +75,14 @@ func (s *rootSender) Send(cfg *config.Config) error {
 		e := curl.NewSender(s.log)
 		return e.Send(actualCfg)
 	default:
-		return errors.New(errMsgInvalid)
+		return ErrInvalidSender
 	}
 }
 
 func toSenderType(name string) (SenderType, error) {
-	switch strings.ToLower(name) {
-	case NativeSenderName:
-		return NativeSender, nil
-	case CurlSenderName:
-		return CurlSender, nil
-	default:
-		return -1, fmt.Errorf("%s name '%s'", errMsgInvalid, name)
+	index := slices.Index(Names, name)
+	if index < 0 {
+		return -1, fmt.Errorf("%w: name '%s'", ErrInvalidSender, name)
 	}
+	return SenderType(index), nil
 }
