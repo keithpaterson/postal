@@ -16,4 +16,6 @@ type RequestConfig struct {
 	Headers HeadersConfig `toml:"headers,omitempty"   validate:"omitempty,dive,gt=0"`
 }
 
+// TODO(keithpaterson): add timeout, backoff info either here or in another struct (or a child struct?)
+
 type HeadersConfig map[string]string

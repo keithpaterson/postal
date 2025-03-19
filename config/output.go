@@ -13,7 +13,7 @@ const (
 // TODO(keithpaterson): could add more output types, e.g. OutBase64, or something like that
 
 var (
-	outNames = []string{"raw", "text"}
+	OutFmtNames = []string{"raw", "text"}
 )
 
 type OutFormat int
@@ -45,11 +45,11 @@ func (of OutFormat) String() string {
 	if of < 0 || of >= numOutFormats {
 		return "undefined"
 	}
-	return outNames[of]
+	return OutFmtNames[of]
 }
 
 func (o OutputConfig) OutFormat() OutFormat {
-	index := slices.Index(outNames, o.Format)
+	index := slices.Index(OutFmtNames, o.Format)
 	if index < 0 {
 		return OutFmtText
 	}
