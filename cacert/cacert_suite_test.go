@@ -10,7 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestModels(t *testing.T) {
+func TestCacert(t *testing.T) {
 	logging.Disable()
 	RegisterFailHandler(Fail)
 	cacert.LoadTestPrivateKeys()

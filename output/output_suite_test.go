@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestModels(t *testing.T) {
+func TestOutput(t *testing.T) {
 	logging.Disable()
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Output Suite")

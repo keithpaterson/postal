@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestModels(t *testing.T) {
+func TestSender(t *testing.T) {
 	logging.Disable()
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Sender Suite")

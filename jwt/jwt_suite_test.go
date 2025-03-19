@@ -10,7 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestModels(t *testing.T) {
+func TestJWT(t *testing.T) {
 	logging.Disable()
 	RegisterFailHandler(Fail)
 	jwt.LoadTestPrivateKeys()

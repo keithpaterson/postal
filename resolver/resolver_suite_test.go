@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestModels(t *testing.T) {
+func TestResolver(t *testing.T) {
 	logging.Disable()
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Resolver Suite")
