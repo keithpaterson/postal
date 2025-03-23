@@ -75,6 +75,10 @@ type JWTHeader struct {
 
 type JWTClaims map[string]string
 
+func newJWTConfig() JWTConfig {
+	return JWTConfig{Header: JWTHeader{Alg: AlgHS256.String()}, Claims: make(JWTClaims)}
+}
+
 func (a JWTAlgorithm) String() string {
 	if a < 0 || a >= algMax {
 		return strconv.Itoa(int(a))

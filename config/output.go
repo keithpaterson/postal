@@ -38,7 +38,7 @@ type OutputConfig struct {
 type Options map[string]string
 
 func newOutputConfig() OutputConfig {
-	return OutputConfig{Format: "text"}
+	return OutputConfig{Format: "text", Filename: "stdout", Template: "${response:body}"}
 }
 
 func (of OutFormat) String() string {

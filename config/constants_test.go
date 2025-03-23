@@ -31,6 +31,7 @@ var (
 	// what the "file" data should decode into:
 	validReq   = RequestConfig{Method: "POST", URL: "http://test.io", Body: `json:{"this":"that","then":123}`, Headers: make(HeadersConfig)}
 	validProps = Properties{"one": "1", "two": int64(2), "three": "three"}
+	emptyJWT   = JWTConfig{Claims: make(JWTClaims)}
 	validJWT   = JWTConfig{
 		Header: JWTHeader{Alg: "HS256"},
 		Claims: JWTClaims{"iss": "foo", "sub": "this=x,that=y,those=z", "aud": "urn:testything", "exp": "987654321", "foo": "bar", "bar": "foo"}}
