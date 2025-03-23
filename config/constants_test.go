@@ -29,7 +29,7 @@ var (
 		bar = "foo"`)
 
 	// what the "file" data should decode into:
-	validReq   = RequestConfig{Method: "POST", URL: "http://test.io", Body: `json:{"this":"that","then":123}`}
+	validReq   = RequestConfig{Method: "POST", URL: "http://test.io", Body: `json:{"this":"that","then":123}`, Headers: make(HeadersConfig)}
 	validProps = Properties{"one": "1", "two": int64(2), "three": "three"}
 	validJWT   = JWTConfig{
 		Header: JWTHeader{Alg: "HS256"},

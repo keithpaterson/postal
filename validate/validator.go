@@ -1,6 +1,7 @@
 package validate
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
@@ -13,6 +14,12 @@ var (
 
 func ValidateStruct(data any) error {
 	return dataValidator.Struct(data)
+}
+
+func ValidateJson(data []byte) error {
+	// just unmarshal it into a map
+	value := map[string]any{}
+	return json.Unmarshal(data, &value)
 }
 
 func newValidator() *validator.Validate {

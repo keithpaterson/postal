@@ -79,7 +79,7 @@ var _ = Describe("Config", func() {
 		Entry("nil reader returns error", nil, expectError(ErrNilReader)),
 		Entry("invalid data returns error", bytes.NewReader([]byte("invalid data")), expectError(toml.ParseError{})),
 		Entry("valid request returns config", bytes.NewReader(validRequestData), expectConfig(&Config{Request: validReq})),
-		Entry("valid properties returns config", bytes.NewReader(validPropertiesData), expectConfig(&Config{Properties: validProps})),
-		Entry("valid jwt returns config", bytes.NewReader(validJWTData), expectConfig(&Config{JWT: validJWT})),
+		Entry("valid properties returns config", bytes.NewReader(validPropertiesData), expectConfig(&Config{Request: newRequestConfig(), Properties: validProps})),
+		Entry("valid jwt returns config", bytes.NewReader(validJWTData), expectConfig(&Config{Request: newRequestConfig(), JWT: validJWT})),
 	)
 })

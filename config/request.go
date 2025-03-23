@@ -19,3 +19,9 @@ type RequestConfig struct {
 // TODO(keithpaterson): add timeout, backoff info either here or in another struct (or a child struct?)
 
 type HeadersConfig map[string]string
+
+func newRequestConfig() RequestConfig {
+	return RequestConfig{
+		Headers: make(HeadersConfig),
+	}
+}

@@ -19,12 +19,17 @@ url = "http://test.io/fing/fang/fong"
 body = 'json:{"this":"that","then":123}'`)
 	)
 	var (
-		validReq = RequestConfig{Method: "POST", URL: "http://test.io/fing/fang/fong", Body: `json:{"this":"that","then":123}`}
+		validReq = RequestConfig{
+			Method:  "POST",
+			URL:     "http://test.io/fing/fang/fong",
+			Body:    `json:{"this":"that","then":123}`,
+			Headers: make(HeadersConfig),
+		}
 	)
 	DescribeTable("from TOML",
 		func(input []byte, expect expectation) {
 			// Act
-			var actual RequestConfig
+			actual := newRequestConfig()
 			_, err := toml.NewDecoder(bytes.NewReader(input)).Decode(&actual)
 
 			// Assert

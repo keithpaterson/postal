@@ -57,7 +57,7 @@ type Config struct {
 type Properties map[string]any
 
 func NewConfig() *Config {
-	cfg := &Config{Cacert: newCacertConfig(), Output: newOutputConfig()}
+	cfg := &Config{Request: newRequestConfig(), Cacert: newCacertConfig(), Output: newOutputConfig()}
 	return cfg
 }
 
