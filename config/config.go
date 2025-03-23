@@ -52,12 +52,22 @@ type Config struct {
 	Cacert     CacertConfig  `toml:"cacert,omitempty"     validate:"omitempty"`
 	Properties Properties    `toml:"properties,omitempty" validate:"omitempty,dive,gt=0"`
 	Output     OutputConfig  `toml:"output,omitempty"     validate:"omitempty"`
+
+	// never persisted
+	Runtime RuntimeConfig
 }
 
 type Properties map[string]any
 
 func NewConfig() *Config {
-	cfg := &Config{Request: newRequestConfig(), JWT: newJWTConfig(), Cacert: newCacertConfig(), Output: newOutputConfig(), Properties: make(Properties)}
+	cfg := &Config{
+		Request:    newRequestConfig(),
+		JWT:        newJWTConfig(),
+		Cacert:     newCacertConfig(),
+		Output:     newOutputConfig(),
+		Properties: make(Properties),
+		Runtime:    RuntimeConfig{DryRun: false},
+	}
 	return cfg
 }
 

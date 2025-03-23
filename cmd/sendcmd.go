@@ -107,6 +107,7 @@ func (p *sendCmdParser) parseConfig(cmd *cobra.Command) (*config.Config, error) 
 
 	var err error
 	p.cfg = config.NewConfig()
+	p.cfg.Runtime.DryRun = p.dryRun
 
 	// order is important here:
 	// - config files are lowest-order data sources; bring all of them in first
