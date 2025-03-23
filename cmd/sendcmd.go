@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -27,6 +28,13 @@ const (
 	templateFlag, tFlag = "template", "t"
 	urlFlag, uFlag      = "url", "u"
 	usingFlag           = "using"
+)
+
+var (
+	ErrInvalidConfigFile    = errors.New("config file error")
+	ErrInvalidPropertyValue = errors.New("invalid property value")
+	ErrInvalidHeader        = errors.New("invalid header value")
+	ErrInvalidJWTClaim      = errors.New("invalid JWT claim")
 )
 
 func NewSendCommand() *cobra.Command {
@@ -134,11 +142,11 @@ func (p *sendCmdParser) loadConfig() error {
 		var file *os.File
 		var err error
 		if file, err = os.Open(filename); err != nil {
-			return fmt.Errorf("failed to open file: %w", err)
+			return fmt.Errorf("%w: failed to open file: %w", ErrInvalidConfigFile, err)
 		}
 		if err = p.cfg.Load(file); err != nil {
 			file.Close()
-			return fmt.Errorf("failed to load file: %w", err)
+			return fmt.Errorf("%w: failed to load file: %w", ErrInvalidConfigFile, err)
 		}
 		file.Close()
 	}
@@ -156,7 +164,7 @@ func (p *sendCmdParser) processProperties() error {
 		var key, value string
 		var ok bool
 		if key, value, ok = strings.Cut(prop, "="); !ok {
-			return fmt.Errorf("failed to parse property value '%s'", prop)
+			return fmt.Errorf("%w: failed to parse value '%s'", ErrInvalidPropertyValue, prop)
 		}
 		p.cfg.Properties[strings.TrimSpace(key)] = strings.TrimSpace(value)
 	}
@@ -205,7 +213,7 @@ func (p *sendCmdParser) processRequestHeaders() error {
 	for _, header := range headers {
 		key, value, ok := strings.Cut(header, "=")
 		if !ok {
-			return fmt.Errorf("invalid header specification '%s' (expect key=value)", header)
+			return fmt.Errorf("%w: expect key=value, got '%s'", ErrInvalidHeader, header)
 		}
 		p.cfg.Request.Headers[key] = value
 	}
@@ -246,7 +254,7 @@ func (p *sendCmdParser) processJWTClaims() error {
 		var key, value string
 		var ok bool
 		if key, value, ok = strings.Cut(claim, "="); !ok {
-			return fmt.Errorf("failed to parse JWT claim value '%s'", claim)
+			return fmt.Errorf("%w: expect key=value, got '%s'", ErrInvalidJWTClaim, claim)
 		}
 		p.cfg.JWT.Claims[strings.TrimSpace(key)] = strings.TrimSpace(value)
 	}
