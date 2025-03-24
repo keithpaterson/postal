@@ -55,23 +55,11 @@ func (s *httpSender) execute() error {
 		req.Header.Add(key, value)
 	}
 
-	var resp *http.Response
-	c := client.NewHTTPClient("test").WithRetryHandler(client.NewRetryCounter(0))
-	if err = s.configureTLS(c.Client); err != nil {
-		return err
+	if s.cfg.Runtime.DryRun {
+		return s.dryRun(req)
 	}
 
-	if resp, err = c.Execute(req); err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	writer := output.NewOutputter(s.cfg)
-	if err = writer.Write(resp); err != nil {
-		return err
-	}
-
-	return nil
+	return s.sendAndReceive(req)
 }
 
 func (s *httpSender) configureTLS(client *http.Client) error {
@@ -137,4 +125,25 @@ func (s *httpSender) getBodyData() ([]byte, error) {
 	}
 
 	return body, nil
+}
+
+func (s *httpSender) sendAndReceive(req *http.Request) error {
+	var err error
+	var resp *http.Response
+	c := client.NewHTTPClient("test").WithRetryHandler(client.NewRetryCounter(0))
+	if err = s.configureTLS(c.Client); err != nil {
+		return err
+	}
+
+	if resp, err = c.Execute(req); err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	writer := output.NewOutputter(s.cfg)
+	if err = writer.Write(resp); err != nil {
+		return err
+	}
+
+	return nil
 }

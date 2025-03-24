@@ -57,11 +57,11 @@ _unit_coverage() {
   echo "generating test coverage..."
   mkdir -p ${_test_report_dir}
   rm -f ${_test_report_dir}/coverage.raw.out ${_test_report_dir}/coverage.out
-  go test --tags testutils --test.coverprofile ${_test_report_dir}/coverage.raw.out ./... | grep -v mocks 
+  go test --tags testutils --test.coverprofile ${_test_report_dir}/coverage.raw.out ./... | grep -v mocks
   local _result=$?
 
   # filter out mocks directories from coverage
-  grep -vE 'mocks/|utility/test/' ${_test_report_dir}/coverage.raw.out > ${_test_report_dir}/coverage.out
+  grep -vE 'mocks/|utility/test/|dry_run.go|postal/main.go' ${_test_report_dir}/coverage.raw.out > ${_test_report_dir}/coverage.out
   go tool cover -html=${_test_report_dir}/coverage.out -o ${_test_report_dir}/coverage.html
   if [ ${_result} -ne 0 ]; then
       exit ${_result}

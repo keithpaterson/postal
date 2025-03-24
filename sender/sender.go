@@ -67,6 +67,9 @@ func (s *rootSender) Send(cfg *config.Config) error {
 	}
 	s.log.Debugw("Send", "validated config", fmt.Sprintf("%#v", actualCfg))
 
+	// Runtime info doesn't get persisted, so copy the original information
+	actualCfg.Runtime = cfg.Runtime
+
 	switch s.id {
 	case NativeSender:
 		e := native.NewSender(s.log)
